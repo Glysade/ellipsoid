@@ -87,6 +87,7 @@ You will need to install
 
 * Windows terminal
 * Visual studio code extensions
+* Github account
 
 We will need to spend some time making sure that everything works with your login.
 
@@ -103,6 +104,7 @@ We will need to spend some time making sure that everything works with your logi
   PyMol manual)
 * Use [unit tests](https://code.visualstudio.com/docs/python/testing) so you can define and document
   your program's behavior.
+* Use `git` to share and back up your project
 * What happens when you try to create an ellipsoid for a "flat" structure like benzene?  I guess 
   it will crash.  What can be done to fix that. 
 * More advanced- use RDKit to find all the rings in a molecule.  Chop the molecule up into rings 
