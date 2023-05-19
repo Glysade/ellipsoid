@@ -6,8 +6,12 @@ import numpy.linalg as la
 from numpy.typing import NDArray
 from typing import NamedTuple
 import os
+import sys
+from dataclasses import dataclass
+import argparse
 
-class Ellipse(NamedTuple):
+@dataclass
+class Ellipse:
     center: NDArray
     square_matrix: NDArray
     eigen_values: NDArray
@@ -21,9 +25,37 @@ def generate_3d_conformation(mol: Mol) -> Mol:
     AllChem.MMFFOptimizeMolecule(mol)
     return mol
 
-def molecule_points(mol: Mol) -> NDArray:
+def molecule_points(mol: Mol, includeHydro, expandAtom) -> NDArray:
     conformer = mol.GetConformer()
-    coordinates = conformer.GetPositions()
+    coordinates = []
+    for atom in mol.GetAtoms():
+        x = atom.GetAtomicNum()
+        if includeHydro or atom.GetAtomicNum() > 1:
+            index = atom.GetIdx()
+            if expandAtom:
+                coordinate = conformer.GetAtomPosition(index)
+                r = Chem.GetPeriodicTable().GetRvdw(x)
+                coordinate.x = coordinate.x + r;
+                coordinates.append(coordinate)
+                coordinate = conformer.GetAtomPosition(index)
+                coordinate.x = coordinate.x - r;
+                coordinates.append(coordinate)
+                coordinate = conformer.GetAtomPosition(index)
+                coordinate.y = coordinate.y + r;
+                coordinates.append(coordinate)
+                coordinate = conformer.GetAtomPosition(index)
+                coordinate.y = coordinate.y - r;
+                coordinates.append(coordinate)
+                coordinate = conformer.GetAtomPosition(index)
+                coordinate.z = coordinate.z + r;
+                coordinates.append(coordinate)
+                coordinate = conformer.GetAtomPosition(index)
+                coordinate.z = coordinate.z - r;
+                coordinates.append(coordinate)
+            else:
+                coordinate = conformer.GetAtomPosition(index)
+                coordinates.append(coordinate)
+
     return np.asarray(coordinates)
 
 
@@ -90,6 +122,7 @@ def print_pymol_ellipse(mol: Mol, base: str, ellipse: Ellipse) -> None:
     drawCommand = drawCommand + ')'
     py_script = f'{base}.py'
     with open(py_script, 'wt') as fh:
+        fh.write("cmd.delete('all')\n")
         fh.write(f"cmd.load('{full_sd_path}')\n")
         fh.write(drawCommand)
         fh.write('\n')
@@ -101,13 +134,24 @@ def print_pymol_ellipse(mol: Mol, base: str, ellipse: Ellipse) -> None:
 
 
 if __name__ == '__main__':
-    smiles = "CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--smiles")
+    parser.add_argument("--includeHydros", action=argparse.BooleanOptionalAction)
+    parser.add_argument("--expandAtom", action=argparse.BooleanOptionalAction)
+    args = parser.parse_args()
+    print(f'Smiles from arguments is {args.smiles}')
+    print(f'includeHydros from arguments is {args.includeHydros}')
+    print(f'expandAtom from arguments is {args.expandAtom}')
+    smiles = args.smiles
+    if not smiles:
+        print('Using default smiles')
+        smiles = "CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O"
+    includeHydros = args.includeHydros
+    expandAtom = args.expandAtom
     mol = Chem.MolFromSmiles(smiles)
     mol = generate_3d_conformation(mol)
-
-
     # find points on ellipsoid
-    points = molecule_points(mol)
+    points = molecule_points(mol, includeHydros, expandAtom)
     # find MVEE
     # Quadratic form defined by square symmetric matrix A and centered at centroid
     A, center = mvee(points);
