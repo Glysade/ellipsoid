@@ -4,7 +4,6 @@ from rdkit.Chem.rdchem import Mol
 import numpy as np
 import numpy.linalg as la
 from numpy.typing import NDArray
-from typing import NamedTuple
 import os
 import sys
 from dataclasses import dataclass
@@ -18,6 +17,17 @@ class Ellipse:
     eigen_vectors: NDArray
     axes_magnitudes: NDArray
     axes: NDArray
+
+@dataclass
+class ProgramInput:
+    includeHydros: bool
+    expandAtom: bool
+    smiles: str
+
+@dataclass
+class MoleculeOutput:
+    mol: Mol
+    ellipsis: [Ellipse]
 
 def generate_3d_conformation(mol: Mol) -> Mol:
     mol = Chem.AddHs(mol)
@@ -100,14 +110,15 @@ def quadratic_to_parametric(center: NDArray, A: NDArray) -> Ellipse:
     return ellipse
 
 
-def print_pymol_ellipse(mol: Mol, base: str, ellipse: Ellipse) -> None:
-
+def print_pymol_ellipse(moleculeOutput: MoleculeOutput, base: str) -> None:
+    mol = moleculeOutput.mol
     block = Chem.MolToMolBlock(mol)
     out_file = f'{base}.sdf'
     with open(out_file, 'wt') as fh:
         fh.write(block)
     full_sd_path = os.getcwd() + os.path.sep + out_file;
 
+    ellipse = moleculeOutput.ellipsis[0]
     center = ellipse.center
     mag = ellipse.axes_magnitudes
     rot = ellipse.eigen_vectors
@@ -132,6 +143,20 @@ def print_pymol_ellipse(mol: Mol, base: str, ellipse: Ellipse) -> None:
     full_py_path = os.getcwd() + os.path.sep + py_script
     print(f'Pymol script {full_py_path}')
 
+def find_ellipses(programInput: ProgramInput):
+    mol = Chem.MolFromSmiles(programInput.smiles)
+    mol = generate_3d_conformation(mol)
+    # find points on ellipsoid
+    points = molecule_points(mol, programInput.includeHydros, programInput.expandAtom)
+    # find MVEE
+    # Quadratic form defined by square symmetric matrix A and centered at centroid
+    A, center = mvee(points);
+
+    ellipsoid = quadratic_to_parametric(center, A)
+
+    output = MoleculeOutput(mol, [ellipsoid])
+    return output
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -148,16 +173,11 @@ if __name__ == '__main__':
         smiles = "CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O"
     includeHydros = args.includeHydros
     expandAtom = args.expandAtom
-    mol = Chem.MolFromSmiles(smiles)
-    mol = generate_3d_conformation(mol)
-    # find points on ellipsoid
-    points = molecule_points(mol, includeHydros, expandAtom)
-    # find MVEE
-    # Quadratic form defined by square symmetric matrix A and centered at centroid
-    A, center = mvee(points);
 
-    ellipsoid = quadratic_to_parametric(center, A)
-    print_pymol_ellipse(mol, 'out', ellipsoid)    
+    programInput = ProgramInput(includeHydros, expandAtom, smiles)
+    output = find_ellipses(programInput)
+   
+    print_pymol_ellipse(output, 'out')    
 
 
 
