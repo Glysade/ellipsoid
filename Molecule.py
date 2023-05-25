@@ -105,6 +105,9 @@ def quadratic_to_parametric(center: NDArray, A: NDArray) -> Ellipse:
     # Columns of U (rows of VT) are Eigen vectors of A
     U, D, VT = la.svd(A)
     axes_magnitudes = 1.0/np.sqrt(D)
+    small = [x < 1 for x in axes_magnitudes]
+    if all(small) == True:
+        return ValueError
     # hack to multiply by row instead of column
     axes = VT * axes_magnitudes[:, np.newaxis]
 
@@ -195,6 +198,7 @@ if __name__ == '__main__':
     output = find_ellipses(programInput)
    
     print_pymol_ellipse(output, 'out')    
+    
 
 
 

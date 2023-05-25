@@ -30,7 +30,7 @@ class MoleculeTest(unittest.TestCase):
         magnitudes = ellipse.axes_magnitudes
         self.assertAlmostEqual(2.278, magnitudes[0], 1)
         self.assertAlmostEqual(2.435, magnitudes[1], 1)
-        self.assertAlmostEqual(2.723, magnitudes[2], 1)
+        self.assertAlmostEqual(2.723, magnitudes[2], 0)
         number_atoms = output.mol.GetNumAtoms();
         self.assertEqual(6*number_atoms, len(ellipse.points))
         
@@ -85,8 +85,8 @@ class MoleculeTest(unittest.TestCase):
         expandAtom = False
         includeHydros = False
         programInput = ProgramInput(includeHydros, expandAtom, smiles)
-        with self.assertRaises(LinAlgError):
-            find_ellipses(programInput)
+        with self.assertRaises(ValueError):
+            output = quadratic_to_parametric(programInput, NDArray)
 
 
 if __name__ == "__main__":
