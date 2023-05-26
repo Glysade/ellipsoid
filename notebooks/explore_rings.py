@@ -52,6 +52,7 @@ atom_idx = 1
 atom: Atom = mol.GetAtomWithIdx(atom_idx)
 neighbors = atom.GetNeighbors()
 neighbors
+# = anything the atom is bonded to
 
 
 # %%
