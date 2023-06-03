@@ -33,10 +33,17 @@ class RingFinderTest(unittest.TestCase):
         neighbors = ringFinder._ring_neighbors(23)
         self.assertCountEqual(neighbors, [18,24,22])
 
-    def test_rings(self):
+    def test_rings_no_neighbors(self):
         smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
         mol = Chem.MolFromSmiles(smiles)
-        ringFinder = RingFinder(mol)
+        ringFinder = RingFinder(mol, False)
         rings = ringFinder.rings
         self.assertCountEqual(rings, [[1,2,3,4,5], [9,10,11,12,13,14],[15,16,17,18,19,20,21,22,23,24]])
+
+    def test_rings_neighbors(self):
+        smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
+        mol = Chem.MolFromSmiles(smiles)
+        ringFinder = RingFinder(mol, True)
+        rings = ringFinder.rings
+        self.assertCountEqual(rings, [[0,1,2,3,4,5,6,25], [7,8,15,16,17,18,19,20,21,22,23,24],[15,16,17,18,19,20,21,22,23,24]])
 

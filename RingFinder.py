@@ -5,10 +5,11 @@ from rdkit import Chem
 from rdkit.Chem.rdchem import Mol, Atom, Bond
 
 class RingFinder:
-    def __init__(self, mol, addRingNieghbors=False):
+    def __init__(self, mol, addRingNeighbors=False):
         self.mol = mol 
         assigned_atoms = set()
         self.assigned_atoms = assigned_atoms
+        self.addRingNieghbors = addRingNeighbors
 
         #find atoms in rings 
         ring_atoms = set()
@@ -24,7 +25,8 @@ class RingFinder:
                 j = bond.GetIdx()
                 ring_bonds.add(j)
         self.ring_bonds = ring_bonds
-        self.rings = self._find_rings()
+        self._find_rings()
+        self._find_complete_rings(addRingNeighbors)
 
     def _ring_neighbors(self, atom_index):
         ring_neighbors = []
@@ -70,26 +72,26 @@ class RingFinder:
         current_ring = self._find_next_ring()
         while current_ring:
             all_rings.append(current_ring)
-            current_ring = self._find_next_ring();
-        return all_rings
-        self.all_rings = all_rings
+            current_ring = self._find_next_ring()
+        self.rings = all_rings
 
-    def _find_complete_rings(self):
-        for ring in self.rings:
-            for atom_index in range(len(ring)):
-                atom = self.mol.GetAtomWithIdx(atom_index)
-                neighbors = atom.GetNeighbors()
-                for neighbor in neighbors:
-                    idx = neighbor.GetIdx()
-                    if idx not in self.assigned_atoms:
-                        ring.append(idx)
-                        self.assigned_atoms.add(idx)
-                    pass
+    def _find_complete_rings(self, addRingNeighbors):
+        if addRingNeighbors == True: 
+            for ring in self.rings:
+                for atom_index in range(len(ring)):
+                    atom = self.mol.GetAtomWithIdx(atom_index)
+                    neighbors = atom.GetNeighbors()
+                    for neighbor in neighbors:
+                        idx = neighbor.GetIdx()
+                        if idx not in self.assigned_atoms:
+                            ring.append(idx)
+                            self.assigned_atoms.add(idx)
+                            ring.sort()
 
 if __name__ == '__main__':
     smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
     m = Chem.MolFromSmiles(smiles)
-    ringFinder = RingFinder(m)
-    ringFinder._find_complete_rings()
+    ringFinder = RingFinder(m, True)
+
     pass
 
