@@ -45,5 +45,51 @@ class RingFinderTest(unittest.TestCase):
         mol = Chem.MolFromSmiles(smiles)
         ringFinder = RingFinder(mol, True)
         rings = ringFinder.rings
-        self.assertCountEqual(rings, [[0,1,2,3,4,5,6,25], [7,8,15,16,17,18,19,20,21,22,23,24],[15,16,17,18,19,20,21,22,23,24]])
+        self.assertCountEqual(rings, [[0,1,2,3,4,5,6,25],[8,9,10,11,12,13,14],[15,16,17,18,19,20,21,22,23,24]])
+        
+    def test_rings_neighbors_lex(self):
+        smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
+        mol = Chem.MolFromSmiles(smiles)
+        ringFinder = RingFinder(mol, True)
+        rings = ringFinder.rings
+        self.assertCountEqual(rings, [[0,1,2,3,4,5,6,],[7,8,9,10,11,12,13,15,16,17,18]])
+    
+    def test_branches(self): 
+        smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
+        mol = Chem.MolFromSmiles(smiles)
+        ringFinder = RingFinder(mol, True)
+        branches = ringFinder.branches
+        self.assertCountEqual(branches, [[7]])
+
+    def test_branches_lex(self): 
+        smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
+        mol = Chem.MolFromSmiles(smiles)
+        ringFinder = RingFinder(mol, True)
+        branches = ringFinder.branches
+        self.assertCountEqual(branches, [[14],[19,20,21,22,23]])
+
+    def test_hydros_lex(self): 
+        smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
+        mol = Chem.MolFromSmiles(smiles)
+        mol = Chem.AddHs(mol)
+        ringFinder = RingFinder(mol, True)
+        branches = ringFinder.branches
+        self.assertCountEqual(branches, [[14],[19,20,21,22,23,35,36,37,38,39,40,41,42,43,44],[33],[34]])
+        rings = ringFinder.rings
+        self.assertCountEqual(rings, [[0,1,2,3,4,5,6,24,25,26,27],[7,8,9,10,11,12,13,15,16,17,18,28,29,30,31,32]])
+   
+
+    def test_hydros(self): 
+        smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
+        mol = Chem.MolFromSmiles(smiles)
+        mol = Chem.AddHs(mol)
+        ringFinder = RingFinder(mol, True)
+        rings = ringFinder.rings
+        self.assertCountEqual(rings, [[0,1,2,3,4,5,6,25,29,30],[8,9,10,11,12,13,14,32,33,34,35,36,37,38,39,40],[15,16,17,18,19,20,21,22,23,24,41,42,43,44,45,46]])
+        branches = ringFinder.branches
+        self.assertCountEqual(branches, [[7],[26],[27],[28],[31]])
+    
+       
+  
+
 

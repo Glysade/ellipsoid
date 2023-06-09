@@ -11,6 +11,7 @@ from rdkit.Chem.rdchem import Mol, Atom, Bond
 IPythonConsole.ipython_useSVG = True
 IPythonConsole.drawOptions.addAtomIndices = True
 IPythonConsole.drawOptions.addBondIndices = True
+IPythonConsole.molSize = (800, 500)
 
 from rdkit.Chem import PandasTools
 from rdkit.Chem import Draw
@@ -20,6 +21,7 @@ import pandas as pd
 # %%
 smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
 mol: Mol = Chem.MolFromSmiles(smiles)
+mol = Chem.AddHs(mol)
 mol
 
 # %%
@@ -63,4 +65,10 @@ for neighbor in neighbors:
     bond_idx = bond.GetIdx()
     print(f'Neighbor of Atom {atom_idx} has atom index {idx} bond between has index {bond_idx}')
 
+# %%
+
+smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
+mol: Mol = Chem.MolFromSmiles(smiles)
+mol = Chem.AddHs(mol)
+mol
 # %%
