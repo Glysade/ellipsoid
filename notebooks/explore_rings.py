@@ -10,7 +10,7 @@ from rdkit.Chem.rdchem import Mol, Atom, Bond
 
 IPythonConsole.ipython_useSVG = True
 IPythonConsole.drawOptions.addAtomIndices = True
-IPythonConsole.drawOptions.addBondIndices = True
+# IPythonConsole.drawOptions.addBondIndices = True
 IPythonConsole.molSize = (800, 500)
 
 from rdkit.Chem import PandasTools
