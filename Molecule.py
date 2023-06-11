@@ -137,42 +137,42 @@ def print_pymol_ellipse(moleculeOutput: MoleculeOutput, base: str) -> None:
         fh.write(block)
     full_sd_path = os.getcwd() + os.path.sep + out_file;
 
-    ellipse = moleculeOutput.ellipsis[0]
-    center = ellipse.center
-    mag = ellipse.axes_magnitudes
-    rot = ellipse.eigen_vectors
-    drawCommand = f'tmp = drawEllipsoid([0.85, 0.85, 1.00] '
-    for i in range(3):
-        drawCommand = drawCommand + f', {center[i]}'
-    for i in range(3):
-        drawCommand = drawCommand + f', {mag[i]}'
-    for i in range(3):
-        for j in range(3):
-            drawCommand = drawCommand + f', {rot[i][j]}'
-    drawCommand = drawCommand + ')'
     py_script = f'{base}.py'
     with open(py_script, 'wt') as fh:
         fh.write('from pymol.cgo import *\n')
         fh.write("cmd.delete('all')\n")
         fh.write(f"cmd.load('{full_sd_path}')\n")
-        fh.write(drawCommand)
-        fh.write('\n')
-        fh.write("cmd.load_cgo(tmp, 'ellipsoid-cgo')\n")
-        fh.write("cmd.set('cgo_transparency', 0.5, 'ellipsoid-cgo')\n")
-        fh.write("obj = [\n BEGIN, LINES, \n COLOR, 0, 1.0, 0, \n")
-        # write axes
-        for i in range(0,3):
-             fh.write(f'VERTEX, {center[0]}, {center[1]}, {center[2]},\n')
-             axis = ellipse.axes[i] + center
-             fh.write(f'VERTEX, {axis[0]}, {axis[1]}, {axis[2]},\n')
-        fh.write("END\nhhoefoihwefhi ] \n")
-        fh.write("cmd.load_cgo(obj,'axes')\n")
-        fh.write("obj = [\n BEGIN, POINTS, \n COLOR, 1.0, 1.0, 0, \n")
-        #write points
-        for point in ellipse.points:
-             fh.write(f'VERTEX, {point[0]}, {point[1]}, {point[2]},\n')
-        fh.write("END\n ] \n")
-        fh.write("cmd.load_cgo(obj,'points')")
+        for ellipse_idx, ellipse in enumerate(moleculeOutput.ellipsis):
+            center = ellipse.center
+            mag = ellipse.axes_magnitudes
+            rot = ellipse.eigen_vectors
+            drawCommand = f'tmp{ellipse_idx} = drawEllipsoid([0.85, 0.85, 1.00] '
+            for i in range(3):
+                drawCommand = drawCommand + f', {center[i]}'
+            for i in range(3):
+                drawCommand = drawCommand + f', {mag[i]}'
+            for i in range(3):
+                for j in range(3):
+                    drawCommand = drawCommand + f', {rot[i][j]}'
+            drawCommand = drawCommand + ')'
+            fh.write(drawCommand)
+            fh.write('\n')
+            fh.write(f"cmd.load_cgo(tmp{ellipse_idx}, 'ellipsoid-cgo{ellipse_idx}')\n")
+            fh.write("cmd.set('cgo_transparency', 0.5, 'ellipsoid-cgo')\n")
+            fh.write(f"obj{ellipse_idx} = [\n BEGIN, LINES, \n COLOR, 0, 1.0, 0, \n")
+            # write axes
+            for i in range(0,3):
+                fh.write(f'VERTEX, {center[0]}, {center[1]}, {center[2]},\n')
+                axis = ellipse.axes[i] + center
+                fh.write(f'VERTEX, {axis[0]}, {axis[1]}, {axis[2]},\n')
+            fh.write("END\n] \n")
+            fh.write(f"cmd.load_cgo(obj{ellipse_idx},'axis')\n")
+            fh.write(f"obj{ellipse_idx} = [\n BEGIN, POINTS, \n COLOR, 1.0, 1.0, 0, \n")
+            #write points
+            for point in ellipse.points:
+                fh.write(f'VERTEX, {point[0]}, {point[1]}, {point[2]},\n')
+            fh.write("END\n ] \n")
+            fh.write(f"cmd.load_cgo(obj{ellipse_idx},'points')")
     
     full_py_path = os.getcwd() + os.path.sep + py_script
     print(f'Pymol script {full_py_path}')
