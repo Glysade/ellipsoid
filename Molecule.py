@@ -56,7 +56,7 @@ def molecule_points(mol: Mol, includeHydro, expandAtom, atom_idxs=None) -> NDArr
 
     for atom in atoms:
         x = atom.GetAtomicNum()
-        if includeHydro or atom.GetAtomicNum() > 1:
+        if includeHydro or x > 1:
             index = atom.GetIdx()
             if expandAtom:
                 coordinate = conformer.GetAtomPosition(index)
@@ -158,7 +158,7 @@ def print_pymol_ellipse(moleculeOutput: MoleculeOutput, base: str) -> None:
             fh.write(drawCommand)
             fh.write('\n')
             fh.write(f"cmd.load_cgo(tmp{ellipse_idx}, 'ellipsoid-cgo{ellipse_idx}')\n")
-            fh.write("cmd.set('cgo_transparency', 0.5, 'ellipsoid-cgo')\n")
+            fh.write(f"cmd.set('cgo_transparency', 0.5, 'ellipsoid-cgo{ellipse_idx}')\n")
             fh.write(f"obj{ellipse_idx} = [\n BEGIN, LINES, \n COLOR, 0, 1.0, 0, \n")
             # write axes
             for i in range(0,3):
@@ -166,21 +166,25 @@ def print_pymol_ellipse(moleculeOutput: MoleculeOutput, base: str) -> None:
                 axis = ellipse.axes[i] + center
                 fh.write(f'VERTEX, {axis[0]}, {axis[1]}, {axis[2]},\n')
             fh.write("END\n] \n")
-            fh.write(f"cmd.load_cgo(obj{ellipse_idx},'axis')\n")
+            fh.write(f"cmd.load_cgo(obj{ellipse_idx},'axis{ellipse_idx}')\n")
             fh.write(f"obj{ellipse_idx} = [\n BEGIN, POINTS, \n COLOR, 1.0, 1.0, 0, \n")
             #write points
             for point in ellipse.points:
                 fh.write(f'VERTEX, {point[0]}, {point[1]}, {point[2]},\n')
             fh.write("END\n ] \n")
-            fh.write(f"cmd.load_cgo(obj{ellipse_idx},'points')")
+            fh.write(f"cmd.load_cgo(obj{ellipse_idx},'points{ellipse_idx}'), \n")
     
     full_py_path = os.getcwd() + os.path.sep + py_script
     print(f'Pymol script {full_py_path}')
 
 def find_ellipses(programInput: ProgramInput):
     
-    mol = Chem.MolFromSmiles(programInput.smiles)
-    mol = generate_3d_conformation(mol)
+    mol = None
+    if '\n' in programInput.smiles:
+        mol = Chem.MolFromMolBlock(programInput.smiles)
+    else:
+        mol = Chem.MolFromSmiles(programInput.smiles)
+        mol = generate_3d_conformation(mol)
     ellipsoids = []
     
     if programInput.fragment == True:
@@ -194,7 +198,7 @@ def find_ellipses(programInput: ProgramInput):
             points = molecule_points(mol, programInput.includeHydros, programInput.expandAtom, fragment)
             # find MVEE
             # Quadratic form defined by square symmetric matrix A and centered at centroid
-            if len(points) > 0:
+            if len(points) > 2:
                 A, center = mvee(points);
                 ellipsoid = quadratic_to_parametric(center, A)
                 ellipsoid.points = points
@@ -230,7 +234,8 @@ if __name__ == '__main__':
     smiles = args.smiles
     if not smiles:
         print('Using default smiles')
-        smiles = "CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O"
+        smiles = 'CC'
+        #smiles = 'CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O'
     includeHydros = args.includeHydros
     expandAtom = args.expandAtom
     fragment = args.fragment
