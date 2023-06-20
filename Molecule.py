@@ -186,6 +186,7 @@ def find_ellipses(programInput: ProgramInput):
         mol = Chem.MolFromSmiles(programInput.smiles)
         mol = generate_3d_conformation(mol)
     ellipsoids = []
+    # mol = Chem.RemoveAllHs(mol);
     
     if programInput.fragment == True:
         ringFinder = RingFinder(mol, programInput.addRingNeighbors)
@@ -198,7 +199,7 @@ def find_ellipses(programInput: ProgramInput):
             points = molecule_points(mol, programInput.includeHydros, programInput.expandAtom, fragment)
             # find MVEE
             # Quadratic form defined by square symmetric matrix A and centered at centroid
-            if len(points) > 2:
+            if len(points) > 1:
                 A, center = mvee(points);
                 ellipsoid = quadratic_to_parametric(center, A)
                 ellipsoid.points = points
@@ -234,7 +235,7 @@ if __name__ == '__main__':
     smiles = args.smiles
     if not smiles:
         print('Using default smiles')
-        smiles = 'CC'
+        smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
         #smiles = 'CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O'
     includeHydros = args.includeHydros
     expandAtom = args.expandAtom

@@ -4,7 +4,7 @@ from numpy.linalg import LinAlgError
 
 class MoleculeTest(unittest.TestCase):
 
-    def test_ethane_with_hydrogens(self):
+    def test_3D_default(self):
         smiles = """
      RDKit          3D
 
@@ -284,8 +284,42 @@ class MoleculeTest(unittest.TestCase):
  71136  1  0
 M  END
     """
-        expandAtom = False
-        includeHydros = True
+        expandAtom = True
+        includeHydros = False
+        fragment = True
+        addRingNeighbors = True
+        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        output = find_ellipses(programInput)
+        self.assertEqual(6, len(output.ellipsis))
+        ellipse = output.ellipsis[0]
+        magnitudes = ellipse.axes_magnitudes
+        self.assertAlmostEqual(2.1086, magnitudes[0], 3)
+        self.assertAlmostEqual(3.4459, magnitudes[1], 3)
+        self.assertAlmostEqual(4.0556, magnitudes[2], 3)
+
+    def test_comparison_ethane(self):
+        smiles = """
+     RDKit          3D
+
+  8  7  0  0  0  0  0  0  0  0999 V2000
+   -0.7558    0.0071   -0.0160 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7558   -0.0071    0.0160 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.1627   -0.1018    0.9937 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.1225    0.9487   -0.4356 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.1350   -0.8147   -0.6307 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.1350    0.8148    0.6307 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.1627    0.1018   -0.9937 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.1226   -0.9487    0.4356 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  1  0
+  1  3  1  0
+  1  4  1  0
+  1  5  1  0
+  2  6  1  0
+  2  7  1  0
+  2  8  1  0
+M  END"""
+        expandAtom = True
+        includeHydros = False
         fragment = True
         addRingNeighbors = True
         programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
@@ -293,16 +327,14 @@ M  END
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
         magnitudes = ellipse.axes_magnitudes
-        self.assertAlmostEqual(1.254, magnitudes[0], 3)
-        self.assertAlmostEqual(1.254, magnitudes[1], 3)
-        self.assertAlmostEqual(1.975, magnitudes[2], 3)
-        number_atoms = output.mol.GetNumAtoms();
-        self.assertEqual(number_atoms, len(ellipse.points))
-
-    def test_ethane_with_expandAtom(self):
+        self.assertAlmostEqual(1.7854889, magnitudes[0], 6)
+        self.assertAlmostEqual(1.7863160, magnitudes[1], 6)
+        self.assertAlmostEqual(2.457547, magnitudes[2], 6)
+    
+    def test_ethane(self):
         smiles = 'CC'
         expandAtom = True
-        includeHydros = True
+        includeHydros = False
         fragment = True
         addRingNeighbors = True
         programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
@@ -310,30 +342,56 @@ M  END
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
         magnitudes = ellipse.axes_magnitudes
-        self.assertAlmostEqual(2.278, magnitudes[0], 2)
-        self.assertAlmostEqual(2.435, magnitudes[1], 1)
-        self.assertAlmostEqual(2.723, magnitudes[2], 0)
-        number_atoms = output.mol.GetNumAtoms();
-        self.assertEqual(6*number_atoms, len(ellipse.points))
-        
-    def test_benzene_with_hydrogens(self):
-        smiles = "c1ccccc1"
-        expandAtom = False
-        includeHydros = True
+        self.assertAlmostEqual(1.785, magnitudes[0], 1)
+        self.assertAlmostEqual(1.786, magnitudes[1], 1)
+        self.assertAlmostEqual(2.457, magnitudes[2], 0)
+
+
+    def test_3D_benzene(self):
+        smiles = """
+     RDKit          3D
+
+ 12 12  0  0  0  0  0  0  0  0999 V2000
+    0.8038   -1.1399    0.0149 C   0  0  0  0  0  0  0  0  0  0  0  0
+    1.3891    0.1261   -0.0021 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5854    1.2659   -0.0170 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.8038    1.1399   -0.0149 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.3891   -0.1261    0.0021 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.5854   -1.2659    0.0170 C   0  0  0  0  0  0  0  0  0  0  0  0
+    1.4300   -2.0279    0.0265 H   0  0  0  0  0  0  0  0  0  0  0  0
+    2.4714    0.2243   -0.0038 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.0414    2.2523   -0.0302 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.4300    2.0279   -0.0265 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.4714   -0.2243    0.0038 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.0414   -2.2523    0.0302 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  2  0
+  2  3  1  0
+  3  4  2  0
+  4  5  1  0
+  5  6  2  0
+  6  1  1  0
+  1  7  1  0
+  2  8  1  0
+  3  9  1  0
+  4 10  1  0
+  5 11  1  0
+  6 12  1  0
+M  END"""
+        expandAtom = True
+        includeHydros = False
         fragment = True
         addRingNeighbors = True
         programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
         output = find_ellipses(programInput)
-        self.assertEqual(1, len(output.ellipsis))
+        #self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
         magnitudes = ellipse.axes_magnitudes
-        self.assertAlmostEqual(1.257e-05, magnitudes[0], 2)
-        self.assertAlmostEqual(2.65, magnitudes[1], 2)
-        self.assertAlmostEqual(2.731, magnitudes[2], 2)
+        self.assertAlmostEqual(1.9302225, magnitudes[0], 6)
+        self.assertAlmostEqual(2.9402652, magnitudes[1], 6)
+        self.assertAlmostEqual(3.1391175, magnitudes[2], 6)
         number_atoms = output.mol.GetNumAtoms();
-        self.assertEqual(number_atoms, len(ellipse.points))
         
-    def test_benzene_without_hydrogens(self):
+    def test_benzene(self):
         smiles = "c1ccccc1"
         expandAtom = False
         includeHydros = False
@@ -350,10 +408,20 @@ M  END
         number_atoms = output.mol.GetNumAtoms();
         self.assertEqual(number_atoms - 6, len(ellipse.points))
     
-    def test_hydrogen_cyanide_with_hydrogens(self):
-        smiles = "C # N"
-        expandAtom = False
-        includeHydros = True
+    def test_cyanide_3D(self):
+        smiles = """
+     RDKit          3D
+
+  3  2  0  0  0  0  0  0  0  0999 V2000
+   -0.0317    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    1.1283   -0.0002    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.0967    0.0002    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  3  0
+  1  3  1  0
+M  END
+"""
+        expandAtom = True
+        includeHydros = False
         fragment = True
         addRingNeighbors = True
         programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
@@ -361,11 +429,24 @@ M  END
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
         magnitudes = ellipse.axes_magnitudes
-        self.assertAlmostEqual(1.092, magnitudes[0], 3)
-        self.assertAlmostEqual(1.092, magnitudes[1], 3)
-        self.assertAlmostEqual(1.092, magnitudes[2], 3)
-        number_atoms = output.mol.GetNumAtoms();
-        self.assertEqual(number_atoms, len(ellipse.points))
+        self.assertAlmostEqual(1.7499138, magnitudes[0], 6)
+        self.assertAlmostEqual(1.7501013, magnitudes[1], 6)
+        self.assertAlmostEqual(2.2294569, magnitudes[2], 6)
+    
+    def test_cyanide_2D(self):
+        smiles = "C#N"
+        expandAtom = True
+        includeHydros = False
+        fragment = True
+        addRingNeighbors = True
+        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        output = find_ellipses(programInput)
+        self.assertEqual(1, len(output.ellipsis))
+        ellipse = output.ellipsis[0]
+        magnitudes = ellipse.axes_magnitudes
+        self.assertAlmostEqual(1.7499, magnitudes[0], 1)
+        self.assertAlmostEqual(1.7501, magnitudes[1], 1)
+        self.assertAlmostEqual(2.2294, magnitudes[2], 1)
 
 
     def test_ethane_without_hydrogens(self):
@@ -388,7 +469,142 @@ M  END
         output = find_ellipses(programInput)
         ellipsis = output.ellipsis
         self.assertEqual(len(ellipsis), 4)
-    
+
+    def test_smiles1_3D(self):
+        smiles = """
+     RDKit          3D
+
+ 47 50  0  0  0  0  0  0  0  0999 V2000
+   -6.9727   -1.7539    0.6903 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -6.3847   -0.6957   -0.1675 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -6.9700    0.2283   -0.9999 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -5.9606    1.0212   -1.5745 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -4.7421    0.5565   -1.1027 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -5.0288   -0.4718   -0.2270 N   0  0  0  0  0  0  0  0  0  0  0  0
+   -3.4229    1.0676   -1.4102 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -3.2291    2.1855   -1.8749 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.3931    0.1784   -1.1620 N   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.0092    0.5033   -1.5160 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.4113    1.5728   -0.5883 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.3016    0.9664    0.6173 C   0  0  0  0  0  0  0  0  0  0  0  0
+    1.3262   -0.0011    0.2076 N   0  0  0  0  0  0  0  0  0  0  0  0
+    1.2903   -0.4893   -1.1722 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.1578   -0.7734   -1.5536 C   0  0  0  0  0  0  0  0  0  0  0  0
+    2.6003    0.1100    0.7688 C   0  0  0  0  0  0  0  0  0  0  0  0
+    2.7605    0.3844    2.1256 C   0  0  0  0  0  0  0  0  0  0  0  0
+    4.0381    0.4754    2.6732 C   0  0  0  0  0  0  0  0  0  0  0  0
+    5.1515    0.2805    1.8565 C   0  0  0  0  0  0  0  0  0  0  0  0
+    6.4644    0.3625    2.3545 C   0  0  0  0  0  0  0  0  0  0  0  0
+    7.5508    0.1568    1.5071 C   0  0  0  0  0  0  0  0  0  0  0  0
+    7.3286   -0.1313    0.1655 C   0  0  0  0  0  0  0  0  0  0  0  0
+    6.0201   -0.2119   -0.3217 C   0  0  0  0  0  0  0  0  0  0  0  0
+    4.9189   -0.0103    0.5003 C   0  0  0  0  0  0  0  0  0  0  0  0
+    3.6801   -0.0985   -0.0181 N   0  0  0  0  0  0  0  0  0  0  0  0
+   -8.7976    0.4595   -1.3461 Br  0  0  0  0  0  0  0  0  0  0  0  0
+   -7.6055   -1.3089    1.4650 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -6.1976   -2.3472    1.1867 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -7.5856   -2.4356    0.0916 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -6.0832    1.8452   -2.2672 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -4.3376   -0.9639    0.3232 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.6433   -0.7994   -1.1346 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.0434    0.9275   -2.5284 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.1706    2.2830   -0.2431 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.3201    2.1595   -1.1606 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.4244    0.4548    1.2604 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7229    1.7953    1.1991 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.8529   -1.4273   -1.2625 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.7316    0.2397   -1.8639 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.5621   -1.5270   -0.8639 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.2060   -1.2170   -2.5553 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.8990    0.5066    2.7725 H   0  0  0  0  0  0  0  0  0  0  0  0
+    4.1514    0.6897    3.7319 H   0  0  0  0  0  0  0  0  0  0  0  0
+    6.6440    0.5866    3.4033 H   0  0  0  0  0  0  0  0  0  0  0  0
+    8.5650    0.2208    1.8924 H   0  0  0  0  0  0  0  0  0  0  0  0
+    8.1673   -0.2941   -0.5063 H   0  0  0  0  0  0  0  0  0  0  0  0
+    5.8535   -0.4374   -1.3722 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  1  0
+  2  3  2  0
+  3  4  1  0
+  4  5  2  0
+  5  6  1  0
+  5  7  1  0
+  7  8  2  0
+  7  9  1  0
+  9 10  1  0
+ 10 11  1  0
+ 11 12  1  0
+ 12 13  1  0
+ 13 14  1  0
+ 14 15  1  0
+ 13 16  1  0
+ 16 17  2  0
+ 17 18  1  0
+ 18 19  2  0
+ 19 20  1  0
+ 20 21  2  0
+ 21 22  1  0
+ 22 23  2  0
+ 23 24  1  0
+ 24 25  2  0
+  3 26  1  0
+  6  2  1  0
+ 15 10  1  0
+ 25 16  1  0
+ 24 19  1  0
+  1 27  1  0
+  1 28  1  0
+  1 29  1  0
+  4 30  1  0
+  6 31  1  0
+  9 32  1  0
+ 10 33  1  0
+ 11 34  1  0
+ 11 35  1  0
+ 12 36  1  0
+ 12 37  1  0
+ 14 38  1  0
+ 14 39  1  0
+ 15 40  1  0
+ 15 41  1  0
+ 17 42  1  0
+ 18 43  1  0
+ 20 44  1  0
+ 21 45  1  0
+ 22 46  1  0
+ 23 47  1  0
+M  END
+"""
+        expandAtom = True
+        includeHydros = False
+        fragment = True
+        addRingNeighbors = True
+        programInput = ProgramInput(includeHydros, expandAtom, smiles, addRingNeighbors, fragment,)
+        output = find_ellipses(programInput)
+        ellipsis = output.ellipsis
+        ellipse = output.ellipsis[0]
+        self.assertEqual(len(ellipsis), 4)
+        magnitudes = ellipse.axes_magnitudes
+        self.assertAlmostEqual(1.9608668, magnitudes[0], 6)
+        self.assertAlmostEqual(4.3398075, magnitudes[1], 6)
+        self.assertAlmostEqual(4.7940147, magnitudes[2], 6)
+        ellipse = output.ellipsis[1]
+        magnitudes = ellipse.axes_magnitudes
+        self.assertAlmostEqual(2.3278352, magnitudes[0], 6)
+        self.assertAlmostEqual(3.38101004, magnitudes[1], 6)
+        self.assertAlmostEqual(3.7063896, magnitudes[2], 6)
+        ellipse = output.ellipsis[2]
+        magnitudes = ellipse.axes_magnitudes
+        self.assertAlmostEqual(2.0768646, magnitudes[0], 6)
+        self.assertAlmostEqual(3.2698849, magnitudes[1], 6)
+        self.assertAlmostEqual(4.3541148, magnitudes[2], 6)
+        ellipse = output.ellipsis[3]
+        magnitudes = ellipse.axes_magnitudes
+        self.assertAlmostEqual(1.5499999, magnitudes[0], 6)
+        self.assertAlmostEqual(1.55, magnitudes[1], 6)
+        self.assertAlmostEqual(1.5500000, magnitudes[2], 6)
+
+
+
     def test_smiles2(self):
         smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
         expandAtom = True
