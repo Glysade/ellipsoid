@@ -5,11 +5,11 @@ from rdkit import Chem
 from rdkit.Chem.rdchem import Mol, Atom, Bond
 
 class RingFinder:
-    def __init__(self, mol, addRingNeighbors=False):
+    def __init__(self, mol, numberNeighbors):
         self.mol = mol 
         assigned_atoms = set()
         self.assigned_atoms = assigned_atoms
-        self.addRingNieghbors = addRingNeighbors
+        self.numberNeighbors = numberNeighbors
 
         #find atoms in rings 
         ring_atoms = set()
@@ -26,8 +26,7 @@ class RingFinder:
                 ring_bonds.add(j)
         self.ring_bonds = ring_bonds
         self._find_rings()
-        self._find_complete_rings(addRingNeighbors)
-        self._hydros()
+        self._find_complete_rings(numberNeighbors)
         self._find_branches()
         
     def _ring_neighbors(self, atom_index):
@@ -77,8 +76,8 @@ class RingFinder:
             current_ring = self._find_next_ring()
         self.rings = all_rings
 
-    def _find_complete_rings(self, addRingNeighbors):
-        if addRingNeighbors == True: 
+    def _find_complete_rings(self, numberNeighbors):
+        for _ in range(numberNeighbors):
             for ring in self.rings:
                 for i in range(len(ring)):
                     atom_index = ring[i]
@@ -90,20 +89,6 @@ class RingFinder:
                             ring.append(idx)
                             self.assigned_atoms.add(idx)
                 ring.sort()
-
-    def _hydros(self):
-        for ring in self.rings:
-            for i in range(len(ring)):
-                atom_index = ring[i]
-                atom = self.mol.GetAtomWithIdx(atom_index)
-                neighbors = atom.GetNeighbors()
-                for neighbor in neighbors:
-                    idx = neighbor.GetIdx()
-                    if neighbor.GetAtomicNum() == 1 and idx not in self.assigned_atoms:
-                        ring.append(idx)
-                        self.assigned_atoms.add(idx)
-            ring.sort()
-
                        
     
     def _find_branches(self):
@@ -148,7 +133,7 @@ if __name__ == '__main__':
     smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
     m = Chem.MolFromSmiles(smiles)
     m = Chem.AddHs(m)
-    ringFinder = RingFinder(m, True)
+    ringFinder = RingFinder(m, 2)
     pass
 
 #Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br

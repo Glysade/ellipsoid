@@ -285,10 +285,9 @@ class MoleculeTest(unittest.TestCase):
 M  END
     """
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
         output = find_ellipses(programInput)
         self.assertEqual(6, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -319,10 +318,9 @@ M  END
   2  8  1  0
 M  END"""
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -334,10 +332,9 @@ M  END"""
     def test_ethane(self):
         smiles = 'CC'
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -378,10 +375,9 @@ M  END"""
   6 12  1  0
 M  END"""
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
         output = find_ellipses(programInput)
         #self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -394,10 +390,9 @@ M  END"""
     def test_benzene(self):
         smiles = "c1ccccc1"
         expandAtom = False
-        includeHydros = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -406,7 +401,8 @@ M  END"""
         self.assertAlmostEqual(1.482, magnitudes[1], 1)
         self.assertAlmostEqual(1.899, magnitudes[2], 1)
         number_atoms = output.mol.GetNumAtoms();
-        self.assertEqual(number_atoms - 6, len(ellipse.points))
+        self.assertEqual(number_atoms, len(ellipse.points))
+        self.assertEqual(number_atoms, 6)
     
     def test_cyanide_3D(self):
         smiles = """
@@ -421,10 +417,9 @@ M  END"""
 M  END
 """
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -436,10 +431,9 @@ M  END
     def test_cyanide_2D(self):
         smiles = "C#N"
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -452,20 +446,18 @@ M  END
     def test_ethane_without_hydrogens(self):
         smiles = 'CC'
         expandAtom = False
-        includeHydros = False
         fragment = True
         addRingNeighbors = True 
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
         with self.assertRaises(ValueError):
             output = quadratic_to_parametric(programInput, NDArray)
     
     def test_smiles1(self):
         smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, addRingNeighbors, fragment,)
+        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment,)
         output = find_ellipses(programInput)
         ellipsis = output.ellipsis
         self.assertEqual(len(ellipsis), 4)
@@ -575,10 +567,9 @@ M  END
 M  END
 """
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, addRingNeighbors, fragment,)
+        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment,)
         output = find_ellipses(programInput)
         ellipsis = output.ellipsis
         ellipse = output.ellipsis[0]
@@ -608,10 +599,9 @@ M  END
     def test_smiles2(self):
         smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True 
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, addRingNeighbors, fragment,)
+        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment,)
         output = find_ellipses(programInput)
         ellipsis = output.ellipsis
         self.assertEqual(len(ellipsis), 4)
@@ -619,10 +609,9 @@ M  END
     def test_smiles3(self):
         smiles = 'CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O'
         expandAtom = True
-        includeHydros = False
         fragment = True
         addRingNeighbors = True 
-        programInput = ProgramInput(includeHydros, expandAtom, smiles, addRingNeighbors, fragment,)
+        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment,)
         output = find_ellipses(programInput)
         ellipsis = output.ellipsis
         self.assertEqual(len(ellipsis), 6)

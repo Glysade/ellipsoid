@@ -21,7 +21,6 @@ import pandas as pd
 # %%
 smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
 mol: Mol = Chem.MolFromSmiles(smiles)
-mol = Chem.AddHs(mol)
 mol
 
 # %%
@@ -69,7 +68,6 @@ for neighbor in neighbors:
 
 smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
 mol: Mol = Chem.MolFromSmiles(smiles)
-mol = Chem.AddHs(mol)
 mol
 # %%
 block="""
@@ -352,5 +350,6 @@ block="""
 M  END
 """
 mol = Chem.MolFromMolBlock(block)
+mol = Chem.RemoveHs(mol)
 mol
 # %%
