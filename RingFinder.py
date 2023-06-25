@@ -92,6 +92,7 @@ class RingFinder:
                        
     
     def _find_branches(self):
+        # I don't think we need this- just call _branch directly
         branches = []
         current_branch = self._branch()
         while current_branch:
@@ -132,15 +133,21 @@ class RingFinder:
     def _branch(self):
         degree = []
         branch = []
+        # here we want something like branches = []
         for atom in self.mol.GetAtoms():
             atom_idx = atom.GetIdx();
-            if atom_idx not in self.ring_atoms:
+            if atom_idx not in self.assigned_atoms:
                 degree = atom.GetDegree()
                 if degree == 1:
+                    self.assigned_atoms.add(atom_idx)
                     branch.append(atom_idx)
+                    # Here the atom is the seed of a new branch- so do something like:
+                    # branches.append([atom_idx])
         grow_branch = True
         while grow_branch:
             grow_branch = False
+            # then here we need a loop to go through the branches-
+            # for branch in branches
             for i in range(len(branch)):
                 atom_idx = branch[i]
                 atom = self.mol.GetAtomWithIdx(atom_idx)
