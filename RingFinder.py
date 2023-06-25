@@ -93,13 +93,13 @@ class RingFinder:
     
     def _find_branches(self):
         branches = []
-        current_branch = self._find_next_branch()
+        current_branch = self._branch()
         while current_branch:
             branches.append(current_branch)
-            current_branch = self._find_next_branch()
+            current_branch = self._branch()
         self.branches = branches
 
-
+    """
     def _find_next_branch(self):
         branch = []
         for atom in self.mol.GetAtoms():
@@ -127,6 +127,36 @@ class RingFinder:
                             grow_branch = True
         branch.sort()
         return branch
+    """
+
+    def _branch(self):
+        degree = []
+        branch = []
+        for atom in self.mol.GetAtoms():
+            atom_idx = atom.GetIdx();
+            if atom_idx not in self.ring_atoms:
+                degree = atom.GetDegree()
+                if degree == 1:
+                    branch.append(atom_idx)
+        grow_branch = True
+        while grow_branch:
+            grow_branch = False
+            for i in range(len(branch)):
+                atom_idx = branch[i]
+                atom = self.mol.GetAtomWithIdx(atom_idx)
+                neighbors = atom.GetNeighbors()
+                for neighbor in neighbors:
+                        idx = neighbor.GetIdx()
+                        if idx not in self.assigned_atoms:
+                            branch.append(idx)
+                            self.assigned_atoms.add(idx)
+                            grow_branch = True
+
+        branch.sort()
+        return branch
+                            
+
+                    
 
 
 if __name__ == '__main__':
