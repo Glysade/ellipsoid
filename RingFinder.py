@@ -145,14 +145,24 @@ class RingFinder:
         while grow_branch:
             grow_branch = False
             for branch in branches:
-                for i in range(len(branches)):
-                    #atom_idx = branch[i]
-                    atom = self.mol.GetAtomWithIdx(branches[i])
+                # this is incorrect- we want to iterate over the length of the branch,
+                # not the branches
+                # for i in range(len(branches)):
+                for i in range(len(branch)):
+                    # Your code was correct: branches is a list of lists
+                    # each of those lists (a bracch is a list of atom numbers)
+                    atom_idx = branch[i]
+                    # so this is wrong
+                    # atom = self.mol.GetAtomWithIdx(branches[i])
+                    atom = self.mol.GetAtomWithIdx(atom_idx)
                     neighbors = atom.GetNeighbors()
                     for neighbor in neighbors:
                             idx = neighbor.GetIdx()
                             if idx not in self.assigned_atoms:
-                                branches.append(idx)
+                                # I think this should be branch.append- we are
+                                # growing the current branch, not creating a new branch
+                                # branches.append(idx)
+                                branch.append(idx)
                                 self.assigned_atoms.add(idx)
                                 grow_branch = True
 
@@ -160,13 +170,11 @@ class RingFinder:
             return branches
                             
 
-                    
-
-
 if __name__ == '__main__':
     smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
     m = Chem.MolFromSmiles(smiles)
-    m = Chem.AddHs(m)
+    # Don't want to add hydrogens!
+    # m = Chem.AddHs(m)
     ringFinder = RingFinder(m, 2)
     pass
 
