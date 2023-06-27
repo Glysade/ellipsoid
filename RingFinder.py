@@ -144,24 +144,12 @@ class RingFinder:
         grow_branch = True
         while grow_branch:
             grow_branch = False
-            for branch in branches:
-                # this is incorrect- we want to iterate over the length of the branch,
-                # not the branches
-                # for i in range(len(branches)):
-                for i in range(len(branch)):
-                    # Your code was correct: branches is a list of lists
-                    # each of those lists (a bracch is a list of atom numbers)
-                    atom_idx = branch[i]
-                    # so this is wrong
-                    # atom = self.mol.GetAtomWithIdx(branches[i])
-                    atom = self.mol.GetAtomWithIdx(atom_idx)
+            for i in range(len(branch)):
+                    atom = self.mol.GetAtomWithIdx(branches[i])
                     neighbors = atom.GetNeighbors()
                     for neighbor in neighbors:
                             idx = neighbor.GetIdx()
                             if idx not in self.assigned_atoms:
-                                # I think this should be branch.append- we are
-                                # growing the current branch, not creating a new branch
-                                # branches.append(idx)
                                 branch.append(idx)
                                 self.assigned_atoms.add(idx)
                                 grow_branch = True
