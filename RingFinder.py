@@ -27,7 +27,7 @@ class RingFinder:
         self.ring_bonds = ring_bonds
         self._find_rings()
         self._find_complete_rings(numberNeighbors)
-        self._find_branches()
+        self._branch()
         
     def _ring_neighbors(self, atom_index):
         ring_neighbors = []
@@ -90,7 +90,7 @@ class RingFinder:
                             self.assigned_atoms.add(idx)
                 ring.sort()
                        
-    
+    """
     def _find_branches(self):
         # I don't think we need this- just call _branch directly
         branches = []
@@ -100,7 +100,6 @@ class RingFinder:
             current_branch = self._branch()
         self.branches = branches
 
-    """
     def _find_next_branch(self):
         branch = []
         for atom in self.mol.GetAtoms():
@@ -133,41 +132,39 @@ class RingFinder:
     def _branch(self):
         degree = []
         branch = []
-        # here we want something like branches = []
+        branches = []
+        self.branches = branches
         for atom in self.mol.GetAtoms():
             atom_idx = atom.GetIdx();
             if atom_idx not in self.assigned_atoms:
                 degree = atom.GetDegree()
                 if degree == 1:
                     self.assigned_atoms.add(atom_idx)
-                    branch.append(atom_idx)
-                    # Here the atom is the seed of a new branch- so do something like:
-                    # branches.append([atom_idx])
+                    branches.append([atom_idx])
         grow_branch = True
         while grow_branch:
             grow_branch = False
-            # then here we need a loop to go through the branches-
-            # for branch in branches
-            for i in range(len(branch)):
-                atom_idx = branch[i]
-                atom = self.mol.GetAtomWithIdx(atom_idx)
-                neighbors = atom.GetNeighbors()
-                for neighbor in neighbors:
-                        idx = neighbor.GetIdx()
-                        if idx not in self.assigned_atoms:
-                            branch.append(idx)
-                            self.assigned_atoms.add(idx)
-                            grow_branch = True
+            for branch in branches:
+                for i in range(len(branches)):
+                    #atom_idx = branch[i]
+                    atom = self.mol.GetAtomWithIdx(branches[i])
+                    neighbors = atom.GetNeighbors()
+                    for neighbor in neighbors:
+                            idx = neighbor.GetIdx()
+                            if idx not in self.assigned_atoms:
+                                branches.append(idx)
+                                self.assigned_atoms.add(idx)
+                                grow_branch = True
 
-        branch.sort()
-        return branch
+            branches.sort()
+            return branches
                             
 
                     
 
 
 if __name__ == '__main__':
-    smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
+    smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
     m = Chem.MolFromSmiles(smiles)
     m = Chem.AddHs(m)
     ringFinder = RingFinder(m, 2)
