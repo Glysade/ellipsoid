@@ -28,6 +28,7 @@ class RingFinder:
         self._find_rings()
         self._find_complete_rings(numberNeighbors)
         self._branch()
+        self._merge_branches()
         
     def _ring_neighbors(self, atom_index):
         ring_neighbors = []
@@ -89,46 +90,7 @@ class RingFinder:
                             ring.append(idx)
                             self.assigned_atoms.add(idx)
                 ring.sort()
-                       
-    """
-    def _find_branches(self):
-        # I don't think we need this- just call _branch directly
-        branches = []
-        current_branch = self._branch()
-        while current_branch:
-            branches.append(current_branch)
-            current_branch = self._branch()
-        self.branches = branches
-
-    def _find_next_branch(self):
-        branch = []
-        for atom in self.mol.GetAtoms():
-            atom_idx = atom.GetIdx();
-            if atom_idx not in self.assigned_atoms:
-                branch.append(atom_idx)
-                self.assigned_atoms.add(atom_idx)
-                break;
-
-        if not branch:
-            return branch
-
-        grow_branch = True
-        while grow_branch:
-            grow_branch = False
-            for i in range(len(branch)):
-                atom_idx = branch[i]
-                atom = self.mol.GetAtomWithIdx(atom_idx)
-                neighbors = atom.GetNeighbors()
-                for neighbor in neighbors:
-                        idx = neighbor.GetIdx()
-                        if idx not in self.assigned_atoms:
-                            branch.append(idx)
-                            self.assigned_atoms.add(idx)
-                            grow_branch = True
-        branch.sort()
-        return branch
-    """
-
+   
     def _branch(self):
         degree = []
         branch = []
@@ -144,25 +106,42 @@ class RingFinder:
         grow_branch = True
         while grow_branch:
             grow_branch = False
-            for i in range(len(branch)):
-                    atom = self.mol.GetAtomWithIdx(branches[i])
+            for branch in branches:
+                for i in range(len(branch)):
+                        atom = self.mol.GetAtomWithIdx(branch[i])
+                        neighbors = atom.GetNeighbors()
+                        for neighbor in neighbors:
+                                idx = neighbor.GetIdx()
+                                if idx not in self.assigned_atoms:
+                                    branch.append(idx)
+                                    self.assigned_atoms.add(idx)
+                                    grow_branch = True
+        branches.sort()
+        self.branch = branch
+        self.branches = branches
+        return branches
+   
+    def _merge_branches(self):
+        for branch in self.branches:
+            if len(branch) < 2:
+                for i in range(len(branch)):
+                    atom = self.mol.GetAtomWithIdx(branch[i])
                     neighbors = atom.GetNeighbors()
                     for neighbor in neighbors:
-                            idx = neighbor.GetIdx()
-                            if idx not in self.assigned_atoms:
-                                branch.append(idx)
-                                self.assigned_atoms.add(idx)
-                                grow_branch = True
+                        idx = neighbor.GetIdx()
+                        if neighbor in self.branches:
+                            listi = []
+                            listi.append(branch)
+                            branch = []
+                            for branch in branches:
+                                if neighbor in branch:
+                                    branch.append(listi)
 
-            branches.sort()
-            return branches
-                            
+                                
 
 if __name__ == '__main__':
     smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
     m = Chem.MolFromSmiles(smiles)
-    # Don't want to add hydrogens!
-    # m = Chem.AddHs(m)
     ringFinder = RingFinder(m, 2)
     pass
 
