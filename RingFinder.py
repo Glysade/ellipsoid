@@ -129,9 +129,9 @@ class RingFinder:
                     neighbors = atom.GetNeighbors()
                     for neighbor in neighbors:
                         idx = neighbor.GetIdx()
-                        if neighbor in self.branches:
-                            listi = []
-                            listi.append(branch)
+                        if idx in self.branches:
+                            lista = []
+                            lista.append(branch)
                             branch = []
                             for branch in branches:
                                 if neighbor in branch:
