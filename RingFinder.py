@@ -121,10 +121,20 @@ class RingFinder:
         self.branches = branches
         return branches
    
+    # add an argument called merge_length to this
     def _merge_branches(self):
+
+        # we need to do this complete function multiple times to make sure
+        # everything get merged
+        # Something like:
+        # branches_merged = True
+        # while branches_merged:
+        #    branches_merged = False
         for z in range(len(self.branches)):
             branch = self.branches[z]
-            if len(branch) < 2:
+            # use merge_length instead of 2 here.  
+            # I changed the test to be "less than or equal"
+            if len(branch) <= 2:
                 match = False
                 for i in range(len(branch)):
                     atom = self.mol.GetAtomWithIdx(branch[i])
@@ -150,6 +160,8 @@ class RingFinder:
                     if match:
                         break
                 if match:
+                    # We've merged a branch, so
+                    # branches_merged = True
                     break
         old_branches = self.branches
         self.branches = []
