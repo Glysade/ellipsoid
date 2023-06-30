@@ -122,20 +122,41 @@ class RingFinder:
         return branches
    
     def _merge_branches(self):
-        for branch in self.branches:
+        for z in range(len(self.branches)):
+            branch = self.branches[z]
             if len(branch) < 2:
+                match = False
                 for i in range(len(branch)):
                     atom = self.mol.GetAtomWithIdx(branch[i])
                     neighbors = atom.GetNeighbors()
                     for neighbor in neighbors:
                         idx = neighbor.GetIdx()
-                        if idx in self.branches:
-                            lista = []
-                            lista.append(branch)
-                            branch = []
-                            for branch in branches:
-                                if neighbor in branch:
-                                    branch.append(listi)
+                        for j in range(len(self.branches)):
+                            #2 for loops
+                            #j and z not equal
+                            if j == z:
+                                continue
+                            
+                            other_branch = self.branches[j]
+                            for other_idx in other_branch:
+                                if other_idx == idx:
+                                    match = True
+                                    break
+                            if match:
+                                other_branch.extend(branch)
+                                branch.clear()
+                                other_branch.sort()
+                                break
+                    if match:
+                        break
+                if match:
+                    break
+        old_branches = self.branches
+        self.branches = []
+        for old_branch in old_branches:
+            if old_branch != []: 
+                    self.branches.append(old_branch)
+                                   
 
                                 
 
