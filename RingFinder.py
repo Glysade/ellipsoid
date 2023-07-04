@@ -5,11 +5,12 @@ from rdkit import Chem
 from rdkit.Chem.rdchem import Mol, Atom, Bond
 
 class RingFinder:
-    def __init__(self, mol, numberNeighbors):
+    def __init__(self, mol, numberNeighbors, mergeLength):
         self.mol = mol 
         assigned_atoms = set()
         self.assigned_atoms = assigned_atoms
         self.numberNeighbors = numberNeighbors
+        self.mergeLength = mergeLength
 
         #find atoms in rings 
         ring_atoms = set()
@@ -28,7 +29,7 @@ class RingFinder:
         self._find_rings()
         self._find_complete_rings(numberNeighbors)
         self._branch()
-        self._merge_branches()
+        self._merge_branches(mergeLength)
         
     def _ring_neighbors(self, atom_index):
         ring_neighbors = []
@@ -121,61 +122,52 @@ class RingFinder:
         self.branches = branches
         return branches
    
-    # add an argument called merge_length to this
-    def _merge_branches(self):
-
-        # we need to do this complete function multiple times to make sure
-        # everything get merged
-        # Something like:
-        # branches_merged = True
-        # while branches_merged:
-        #    branches_merged = False
-        for z in range(len(self.branches)):
-            branch = self.branches[z]
-            # use merge_length instead of 2 here.  
-            # I changed the test to be "less than or equal"
-            if len(branch) <= 2:
-                match = False
-                for i in range(len(branch)):
-                    atom = self.mol.GetAtomWithIdx(branch[i])
-                    neighbors = atom.GetNeighbors()
-                    for neighbor in neighbors:
-                        idx = neighbor.GetIdx()
-                        for j in range(len(self.branches)):
-                            #2 for loops
-                            #j and z not equal
-                            if j == z:
-                                continue
-                            
-                            other_branch = self.branches[j]
-                            for other_idx in other_branch:
-                                if other_idx == idx:
-                                    match = True
+    def _merge_branches(self, mergeLength):
+        branches_merged = True
+        while branches_merged:
+            branches_merged = False
+            for z in range(len(self.branches)):
+                branch = self.branches[z]
+                if len(branch) <= mergeLength:
+                    match = False
+                    for i in range(len(branch)):
+                        atom = self.mol.GetAtomWithIdx(branch[i])
+                        neighbors = atom.GetNeighbors()
+                        for neighbor in neighbors:
+                            idx = neighbor.GetIdx()
+                            for j in range(len(self.branches)):
+                                if j == z:
+                                    continue
+                                
+                                other_branch = self.branches[j]
+                                for other_idx in other_branch:
+                                    if other_idx == idx:
+                                        match = True
+                                        break
+                                if match:
+                                    other_branch.extend(branch)
+                                    branch.clear()
+                                    other_branch.sort()
                                     break
-                            if match:
-                                other_branch.extend(branch)
-                                branch.clear()
-                                other_branch.sort()
-                                break
+                        if match:
+                            break
                     if match:
+                        branches_merged = True
                         break
-                if match:
-                    # We've merged a branch, so
-                    # branches_merged = True
-                    break
         old_branches = self.branches
         self.branches = []
         for old_branch in old_branches:
             if old_branch != []: 
                     self.branches.append(old_branch)
+                    old_branch.sort()
                                    
-
+  
                                 
 
 if __name__ == '__main__':
-    smiles = 'Fc1ccc(cc1)[C@@]3(OCc2cc(C#N)ccc23)CCCN(C)C'
+    smiles = 'CCCCC(=O)N(CC1=CC=C(C=C1)C2=CC=CC=C2C3=NN=N[N-]3)C(C(C)C)C(=O)[O-].CCCCC(=O)N(CC1=CC=C(C=C1)C2=CC=CC=C2C3=NN=N[N-]3)C(C(C)C)C(=O)[O-].CCOC(=O)C(C)CC(CC1=CC=C(C=C1)C2=CC=CC=C2)NC(=O)CCC(=O)[O-].CCOC(=O)C(C)CC(CC1=CC=C(C=C1)C2=CC=CC=C2)NC(=O)CCC(=O)[O-].O.O.O.O.O.[Na+].[Na+].[Na+].[Na+].[Na+].[Na+]'
     m = Chem.MolFromSmiles(smiles)
-    ringFinder = RingFinder(m, 2)
+    ringFinder = RingFinder(m, 1, 2)
     pass
 
 #Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br

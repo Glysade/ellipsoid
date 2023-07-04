@@ -28,6 +28,7 @@ class ProgramInput:
     smiles: str
     fragment: bool
     numberNeighbors: int
+    mergeLength: int
 
 @dataclass
 class MoleculeOutput:
@@ -188,7 +189,7 @@ def find_ellipses(programInput: ProgramInput):
     mol = Chem.RemoveAllHs(mol);
     
     if programInput.fragment == True:
-        ringFinder = RingFinder(mol, programInput.numberNeighbors)
+        ringFinder = RingFinder(mol, programInput.numberNeighbors, programInput.mergeLength)
         rings = ringFinder.rings
         branches = ringFinder.branches 
         fragments = list(rings) 
@@ -226,6 +227,7 @@ if __name__ == '__main__':
     parser.add_argument("--expandAtom", action=argparse.BooleanOptionalAction)
     parser.add_argument("--fragment", action=argparse.BooleanOptionalAction)
     parser.add_argument("--numberNeighbors", nargs='?', const=1, type=int)
+    parser.add_argument("--mergeLength", nargs='?', const=1, type=int)
     args = parser.parse_args()
     print(f'Smiles from arguments is {args.smiles}')
     print(f'expandAtom from arguments is {args.expandAtom}')
@@ -237,8 +239,9 @@ if __name__ == '__main__':
     expandAtom = args.expandAtom
     fragment = args.fragment
     numberNeighbors = args.numberNeighbors
+    mergeLength = args.mergeLength
 
-    programInput = ProgramInput( expandAtom, smiles, fragment, numberNeighbors)
+    programInput = ProgramInput( expandAtom, smiles, fragment, numberNeighbors, mergeLength)
     output = find_ellipses(programInput)
    
     print_pymol_ellipse(output, 'out')    
