@@ -7,8 +7,8 @@ Go to project, run python, open PyMol
 # change to project directory
 cd /c/iona/src/ellipsoid/
 # run example program to create out.py and out.sdf
-
-# open ppython.exe Molecule.pyyml
+python.exe Molecule.py
+# open PyMol
 PyMol.exe &
 ```
 

@@ -239,7 +239,7 @@ if __name__ == '__main__':
         # In the smiles a period is used to separate multiple molecules- so this smiles is 4 organic compounds and a bunch of salts
         # We can only deal with single molecules, so I've selected the first
         # smiles = 'CCCCC(=O)N(CC1=CC=C(C=C1)C2=CC=CC=C2C3=NN=N[N-]3)C(C(C)C)C(=O)[O-].CCCCC(=O)N(CC1=CC=C(C=C1)C2=CC=CC=C2C3=NN=N[N-]3)C(C(C)C)C(=O)[O-].CCOC(=O)C(C)CC(CC1=CC=C(C=C1)C2=CC=CC=C2)NC(=O)CCC(=O)[O-].CCOC(=O)C(C)CC(CC1=CC=C(C=C1)C2=CC=CC=C2)NC(=O)CCC(=O)[O-].O.O.O.O.O.[Na+].[Na+].[Na+].[Na+].[Na+].[Na+]'
-        smiles = 'CCCCC(=O)N(CC1=CC=C(C=C1)C2=CC=CC=C2C3=NN=N[N-]3)C(C(C)C)C(=O)[O-]'
+        # smiles = 'CCCCC(=O)N(CC1=CC=C(C=C1)C2=CC=CC=C2C3=NN=N[N-]3)C(C(C)C)C(=O)[O-]'
     expandAtom = args.expandAtom
     fragment = args.fragment
     numberNeighbors = args.numberNeighbors
