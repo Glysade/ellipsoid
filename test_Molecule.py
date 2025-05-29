@@ -287,7 +287,7 @@ M  END
         expandAtom = True
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors, 10)
         output = find_ellipses(programInput)
         self.assertEqual(6, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -320,7 +320,7 @@ M  END"""
         expandAtom = True
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors, 10)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -334,7 +334,7 @@ M  END"""
         expandAtom = True
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors, 10)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -377,7 +377,7 @@ M  END"""
         expandAtom = True
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors, 10)
         output = find_ellipses(programInput)
         #self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -392,7 +392,7 @@ M  END"""
         expandAtom = False
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors, 10)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -419,7 +419,7 @@ M  END
         expandAtom = True
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors, 10)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -433,7 +433,7 @@ M  END
         expandAtom = True
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors, 10)
         output = find_ellipses(programInput)
         self.assertEqual(1, len(output.ellipsis))
         ellipse = output.ellipsis[0]
@@ -448,7 +448,7 @@ M  END
         expandAtom = False
         fragment = True
         addRingNeighbors = True 
-        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors)
+        programInput = ProgramInput(expandAtom, smiles, fragment, addRingNeighbors, 10)
         with self.assertRaises(ValueError):
             output = quadratic_to_parametric(programInput, NDArray)
     
@@ -457,7 +457,7 @@ M  END
         expandAtom = True
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment,)
+        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment, 10)
         output = find_ellipses(programInput)
         ellipsis = output.ellipsis
         self.assertEqual(len(ellipsis), 4)
@@ -569,7 +569,7 @@ M  END
         expandAtom = True
         fragment = True
         addRingNeighbors = True
-        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment,)
+        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment, 10)
         output = find_ellipses(programInput)
         ellipsis = output.ellipsis
         ellipse = output.ellipsis[0]
@@ -601,7 +601,7 @@ M  END
         expandAtom = True
         fragment = True
         addRingNeighbors = True 
-        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment,)
+        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment, 10)
         output = find_ellipses(programInput)
         ellipsis = output.ellipsis
         self.assertEqual(len(ellipsis), 4)
@@ -611,7 +611,7 @@ M  END
         expandAtom = True
         fragment = True
         addRingNeighbors = True 
-        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment,)
+        programInput = ProgramInput(expandAtom, smiles, addRingNeighbors, fragment, 10)
         output = find_ellipses(programInput)
         ellipsis = output.ellipsis
         self.assertEqual(len(ellipsis), 6)
