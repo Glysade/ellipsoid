@@ -6,6 +6,13 @@ from rdkit.Chem.rdchem import Mol, Atom, Bond
 
 class RingFinder:
     def __init__(self, mol, numberNeighbors, mergeLength):
+        '''
+        Initialize the RingFinder
+        :param mol: RDKit Mol object representing the molecule.
+        :param numberNeighbors: Number of neighbors to find for each ring atom.
+        :param mergeLength: Length threshold for merging branches.
+        :return: None
+        '''
         self.mol = mol 
         assigned_atoms = set()
         self.assigned_atoms = assigned_atoms
@@ -32,6 +39,11 @@ class RingFinder:
         self._merge_branches(mergeLength)
         
     def _ring_neighbors(self, atom_index):
+        '''
+        Find the neighbors of a ring atom that are also in a ring.
+        :param atom_index: Index of the atom to find neighbors for.
+        :return: List of indices of neighboring atoms that are also in a ring.
+        '''
         ring_neighbors = []
         if atom_index not in self.ring_atoms:
             return []
@@ -45,6 +57,10 @@ class RingFinder:
         return ring_neighbors
 
     def _find_next_ring(self):
+        '''
+        Find the next ring in the molecule that has not been assigned yet.
+        :return: List of indices of atoms in the next ring, or an empty list if no unassigned ring is found.
+        '''
         ring_atoms = self.ring_atoms
         assigned_atoms = self.assigned_atoms
         start = None
@@ -71,6 +87,10 @@ class RingFinder:
         return current_ring
 
     def _find_rings(self):
+        '''
+        Find all rings in the molecule and store them in self.rings.
+        :return: None
+        '''
         all_rings = []
         current_ring = self._find_next_ring()
         while current_ring:
@@ -79,6 +99,11 @@ class RingFinder:
         self.rings = all_rings
 
     def _find_complete_rings(self, numberNeighbors):
+        '''
+        Find complete rings by expanding each ring with its neighbors.
+        :param numberNeighbors: Number of neighbors to find for each ring atom.
+        :return: None
+        '''
         for _ in range(numberNeighbors):
             for ring in self.rings:
                 for i in range(len(ring)):
@@ -93,6 +118,10 @@ class RingFinder:
                 ring.sort()
    
     def _branch(self):
+        '''
+        Identify branches in the molecule
+        :return: List of branches, where each branch is a list of atom indices.
+        '''
         degree = []
         branch = []
         branches = []
@@ -123,6 +152,10 @@ class RingFinder:
         return branches
    
     def _merge_branches(self, mergeLength):
+        '''
+        Merge branches that are shorter than the specified merge length.
+        :param mergeLength: Length threshold for merging branches.
+        :return: None'''
         branches_merged = True
         while branches_merged:
             branches_merged = False

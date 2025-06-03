@@ -43,6 +43,13 @@ def generate_3d_conformation(mol: Mol) -> Mol:
 
 
 def molecule_points(mol: Mol, expandAtom, atom_idxs=None) -> NDArray:
+    """
+    Generate points in 3D space to represent atoms in the molecule. 
+    :param mol: RDKit generated Mol object
+    :param expandAtom: If True, expand the atom coordinates by the van der Waals radius
+    :param atom_idxs: List of atom indices for atoms in molecule
+    :return: Numpy array of coordinates for the atoms  
+    """
     conformer = mol.GetConformer()
     coordinates = []
     atoms = []
@@ -88,8 +95,14 @@ def molecule_points(mol: Mol, expandAtom, atom_idxs=None) -> NDArray:
 # from https://gist.github.com/Gabriel-p/4ddd31422a88e7cdf953
 def mvee(points, tol=0.0001) -> [NDArray,NDArray]:
     """
-    Finds the ellipse equation in "center form"
+    Uses the ellipse equation
     (x-c).T * A * (x-c) = 1
+    where c is the center and A is a square matrix.
+    The points are the coordinates of the atoms in the molecule.
+    :param points: Numpy array of shape (N, d) where N is the number of points and d is the dimension
+    :param tol: Tolerance for convergence
+    :return: A square matrix A and a center point c
+    :raises ValueError: If the points are not sufficient to define an ellipse 
     """
     N, d = points.shape
     Q = np.column_stack((points, np.ones(N))).T
@@ -108,10 +121,18 @@ def mvee(points, tol=0.0001) -> [NDArray,NDArray]:
     c = np.dot(u, points)
     A = la.inv(np.dot(np.dot(points.T, np.diag(u)), points)
                - np.multiply.outer(c, c))/d
-    return A, c
+    return A, c 
     
 def quadratic_to_parametric(center: NDArray, A: NDArray) -> Ellipse:
-    # eigenvalues and eigenvectors using SVD
+    '''
+    Convert a quadratic form defined by a square symmetric matrix A and centered at center
+    to a parametric form of an ellipse.
+    :param center: Center of the ellipse
+    :param A: Square symmetric matrix defining the ellipse
+    :return: Ellipse object containing the center, square matrix, eigenvalues, eigenvectors, axes magnitudes, and axes
+    :raises ValueError: If the axes magnitudes are too small
+    '''
+    # eigenvalues and eigenvectors using SVD (singular Value Decomposition)
     # see https://en.wikipedia.org/wiki/Singular_value_decomposition
     # and https://laurentlessard.com/teaching/cs524/slides/11%20-%20quadratic%20forms%20and%20ellipsoids.pdf
     # For square symmetric A = U.D.VT matrix U = V 
@@ -121,7 +142,7 @@ def quadratic_to_parametric(center: NDArray, A: NDArray) -> Ellipse:
     axes_magnitudes = 1.0/np.sqrt(D)
     small = [x < 1 for x in axes_magnitudes]
     if all(small) == True:
-        return ValueError
+        raise ValueError
     # hack to multiply by row instead of column
     axes = VT * axes_magnitudes[:, np.newaxis]
 
@@ -130,6 +151,12 @@ def quadratic_to_parametric(center: NDArray, A: NDArray) -> Ellipse:
 
 
 def print_pymol_ellipse(moleculeOutput: MoleculeOutput, base: str) -> None:
+    '''
+    Print a pymol script to visualize the ellipses in the molecule.
+    :param moleculeOutput: MoleculeOutput object containing the molecule and ellipses
+    :param base: Base name for the output files
+    :return: None
+    '''
     mol = moleculeOutput.mol
     block = Chem.MolToMolBlock(mol)
     out_file = f'{base}.sdf'
@@ -177,7 +204,13 @@ def print_pymol_ellipse(moleculeOutput: MoleculeOutput, base: str) -> None:
     full_py_path = os.getcwd() + os.path.sep + py_script
     print(f'Pymol script {full_py_path}')
 
+
 def find_ellipses(programInput: ProgramInput):
+    """
+    Find ellipses in a molecule based on the input parameters.
+    :param programInput: ProgramInput object containing smiles, expandAtom, fragment, numberNeighbors, and mergeLength
+    :return: MoleculeOutput object containing the molecule and found ellipses
+    """
     
     mol = None
     if '\n' in programInput.smiles:
