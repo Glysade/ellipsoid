@@ -49,6 +49,13 @@ def matrix_multiplication(A, B):
                 result[i][j] += (A[i][k] * B[k][j] )
     return np.array(result)
 
+def ellipse_volume(a, b, c,):
+        lengtha = np.linalg.norm(a)
+        lengthb = np.linalg.norm(b)
+        lengthc = np.linalg.norm(c)
+        volume = (4.0 / 3.0) * np.pi * lengtha * lengthb * lengthc
+        return volume
+
 
 class Gaussian:
     covariance_matrix: NDArray
@@ -60,39 +67,45 @@ class Gaussian:
 
     def __init__(self, covariance_inverse_matrix: np.ndarray, center: np.ndarray):
         self.convariance_matrix_inverse = covariance_inverse_matrix
+        self.covariance_matrix = inverse_of_matrix(covariance_inverse_matrix)
         self.center = center
         ellipse = quadratic_to_parametric(center, covariance_inverse_matrix)
-        self.axes = ellipse.axes
         self.a = ellipse.axes[0]
         self.b = ellipse.axes[1]
         self.c = ellipse.axes[2]
 
-    def ellipse_volume(self):
-        lengtha = np.linalg.norm(self.a)
-        lengthb = np.linalg.norm(self.b)
-        lengthc = np.linalg.norm(self.c)
-        volume = (4.0 / 3.0) * np.pi * lengtha * lengthb * lengthc
-        return volume 
+    
 
     @classmethod
     def from_axes(cls, a, b, c, center):
         """
         Create a Gaussian from the axes and center.
         """
+        A = np.dot(a, a)
+        B = np.dot(b, b)
+        C = np.dot(c, c)
+
         # create the inverse of covariance matrix from the axes
         a, b, c = np.array(a), np.array(b), np.array(c)
-        u1 = a / np.linalg.norm(a) # type: ignore
-        u2 = b / np.linalg.norm(b)
-        u3 = c / np.linalg.norm(c)
-        d = 1 / a**2
-        e = 1 / b**2
-        f = 1 / c**2
-        matrixD = ([d, 0, 0,], [0, e, 0], [0, 0, f])
-        matrixU = np.matrix([u1, u2, u3])
-        transposeU = np.matrix.transpose(matrixU)
+        u1 = a / (A ** 0.5) # type: ignore
+        u2 = b / (B ** 0.5)
+        u3 = c / (C ** 0.5)
+        d = 1 / (np.linalg.norm(a))**2
+        e = 1 / (np.linalg.norm(b))**2
+        f = 1 / (np.linalg.norm(c))**2
+        matrixD = np.diag([d, e, f])
+        transposeU = np.array([u1, u2, u3])
+        matrixU = np.matrix.transpose(transposeU) # type: ignore
         #matric A = U * D * U^T
         UD = matrix_multiplication(matrixU, matrixD)
         matrixA = matrix_multiplication(UD, transposeU)
 
-
-        return Gaussian(coveriance_inverse_matrix, center)
+        return Gaussian(matrixA, center)  
+    
+    def volume_constant(self, a, b, c, center):
+        det = deteriminant_of_matrix(self.convariance_matrix_inverse)
+        volume = ellipse_volume(a , b, c)
+        N = (det / (np.pi **3))** 0.5 * volume
+        return N
+    
+    

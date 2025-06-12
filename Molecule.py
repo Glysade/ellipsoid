@@ -140,7 +140,8 @@ def quadratic_to_parametric(center: NDArray, A: NDArray) -> Ellipse:
     # Columns of U (rows of VT) are Eigen vectors of A
     U, D, VT = la.svd(A)
     axes_magnitudes = 1.0/np.sqrt(D)
-    small = [x < 1 for x in axes_magnitudes]
+    #why
+    small = [x < 0.05 for x in axes_magnitudes]
     if all(small) == True:
         raise ValueError
     # hack to multiply by row instead of column
@@ -267,8 +268,9 @@ if __name__ == '__main__':
     smiles = args.smiles
     if not smiles:
         print('Using default smiles')
-        smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'
-        smiles = 'CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O'
+        #smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'  
+        smiles = 'CC'
+        #smiles = 'CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O'
         # In the smiles a period is used to separate multiple molecules- so this smiles is 4 organic compounds and a bunch of salts
         # We can only deal with single molecules, so I've selected the first
         # smiles = 'CCCCC(=O)N(CC1=CC=C(C=C1)C2=CC=CC=C2C3=NN=N[N-]3)C(C(C)C)C(=O)[O-].CCCCC(=O)N(CC1=CC=C(C=C1)C2=CC=CC=C2C3=NN=N[N-]3)C(C(C)C)C(=O)[O-].CCOC(=O)C(C)CC(CC1=CC=C(C=C1)C2=CC=CC=C2)NC(=O)CCC(=O)[O-].CCOC(=O)C(C)CC(CC1=CC=C(C=C1)C2=CC=CC=C2)NC(=O)CCC(=O)[O-].O.O.O.O.O.[Na+].[Na+].[Na+].[Na+].[Na+].[Na+]'
