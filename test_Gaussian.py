@@ -54,88 +54,120 @@ class TestGaussian(unittest.TestCase):
         np.testing.assert_allclose(result.c, c)
 
     def test_volume_constant_smiles2round1(self):
-        a = [ 0.8758055,   2.50142647,  1.24863099]
-        b = [  0.33178312,  1.71381101,  -3.66606685]
-        c = [-4.33687328,  1.39006208,  0.25733364]
-        center = np.array([-6.94834066,  -0.32235233,  0.04795997])
-        gaussian = Gaussian.from_axes(a, b, c, center)
-        volume_const = gaussian.volume_constant(a, b, c, center)
-        result = Gaussian.from_axes(a, b, c, center)
-        np.testing.assert_allclose(result.a, a, rtol = 1e-4, atol = 1e-4)  
-        np.testing.assert_allclose(result.b, b, rtol = 1e-4, atol = 1e-4)
-        np.testing.assert_allclose(result.c, c, rtol = 1e-4, atol = 1e-4)
+        self.a = [ 0.8758055,   2.50142647,  1.24863099]
+        self.b = [  0.33178312,  1.71381101,  -3.66606685]
+        self.c = [-4.33687328,  1.39006208,  0.25733364]
+        self.center = np.array([-6.94834066,  -0.32235233,  0.04795997])
+        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        volume_const = gaussian.volume_constant()
+        result = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        np.testing.assert_allclose(result.a, self.a, rtol = 1e-4, atol = 1e-4)  
+        np.testing.assert_allclose(result.b, self.b, rtol = 1e-4, atol = 1e-4)
+        np.testing.assert_allclose(result.c, self.c, rtol = 1e-4, atol = 1e-4)
         return volume_const
     #volume constant is 0.7522527779826932
 
     def test_volume_constant_smiles2round2(self):
-        a = [ -1.39014301,   -0.66195345,  1.65354358]
-        b = [  1.59688158,  -2.63958842,  0.28581594]
-        c = [2.97449481,  2.16407201,  3.36700415]
-        center = np.array([-1.39665672,  -3.38629163,  -2.62219414])
-        gaussian = Gaussian.from_axes(a, b, c, center)
-        volume_const = gaussian.volume_constant(a, b, c, center)
-        result = Gaussian.from_axes(a, b, c, center)
-        np.testing.assert_allclose(result.a, a, rtol = 1e-4, atol = 1e-4)  
-        np.testing.assert_allclose(result.b, b, rtol = 1e-4, atol = 1e-4)
-        np.testing.assert_allclose(result.c, c, rtol = 1e-4, atol = 1e-4)
+        self.a = [ -1.39014301,   -0.66195345,  1.65354358]
+        self.b = [  1.59688158,  -2.63958842,  0.28581594]
+        self.c = [2.97449481,  2.16407201,  3.36700415]
+        self.center = np.array([-1.39665672,  -3.38629163,  -2.62219414])
+        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        volume_const = gaussian.volume_constant()
+        result = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        np.testing.assert_allclose(result.a, self.a, rtol = 1e-4, atol = 1e-4)  
+        np.testing.assert_allclose(result.b, self.b, rtol = 1e-4, atol = 1e-4)
+        np.testing.assert_allclose(result.c, self.c, rtol = 1e-4, atol = 1e-4)
         return volume_const
     #volume constant is 0.7522527780636751
 
     def test_volume_constant_smiles1round1(self):
-        a = [ -0.30003443,   1.32946329,  1.46748463]
-        b = [  -2.79975352,  1.84930587,  -2.24779645]
-        c = [-3.81354613,  -3.19881181,  2.11825574]
-        center = np.array([-6.32351802,  0.27492053,  -0.93936663])
-        gaussian = Gaussian.from_axes(a, b, c, center)
-        volume_const = gaussian.volume_constant(a, b, c, center)
-        result = Gaussian.from_axes(a, b, c, center)
-        np.testing.assert_allclose(result.a, a, rtol = 1e-4, atol = 1e-4)  
-        np.testing.assert_allclose(result.b, b, rtol = 1e-4, atol = 1e-4)
-        np.testing.assert_allclose(result.c, c, rtol = 1e-4, atol = 1e-4)
+        self.a = [ -0.30003443,   1.32946329,  1.46748463]
+        self.b = [  -2.79975352,  1.84930587,  -2.24779645]
+        self.c = [-3.81354613,  -3.19881181,  2.11825574]
+        self.center = np.array([-6.32351802,  0.27492053,  -0.93936663])
+        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        volume_const = gaussian.volume_constant()
+        result = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        np.testing.assert_allclose(result.a, self.a, rtol = 1e-4, atol = 1e-4)  
+        np.testing.assert_allclose(result.b, self.b, rtol = 1e-4, atol = 1e-4)
+        np.testing.assert_allclose(result.c, self.c, rtol = 1e-4, atol = 1e-4)
         return volume_const
     #volume constant is 0.7522527780636752
 
     def test_volume_constant_smiles1round2(self):
-        a = [ 0.49111521,   1.46922175,  -1.73698885]
-        b = [  0.15652988,  -2.59142209,  -2.14768188]
-        c = [-3.62847313,  0.37099802,  -0.71210589]
-        center = np.array([0.49111521,  1.46922175,  -1.73698885])
-        gaussian = Gaussian.from_axes(a, b, c, center)
-        volume_const = gaussian.volume_constant(a, b, c, center)
-        result = Gaussian.from_axes(a, b, c, center)
-        np.testing.assert_allclose(result.a, a, rtol = 1e-4, atol = 1e-4)  
-        np.testing.assert_allclose(result.b, b, rtol = 1e-4, atol = 1e-4)
-        np.testing.assert_allclose(result.c, c, rtol = 1e-4, atol = 1e-4)
+        self.a = [ 0.49111521,   1.46922175,  -1.73698885]
+        self.b = [  0.15652988,  -2.59142209,  -2.14768188]
+        self.c = [-3.62847313,  0.37099802,  -0.71210589]
+        self.center = np.array([0.49111521,  1.46922175,  -1.73698885])
+        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        volume_const = gaussian.volume_constant()
+        result = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        np.testing.assert_allclose(result.a, self.a, rtol = 1e-4, atol = 1e-4)  
+        np.testing.assert_allclose(result.b, self.b, rtol = 1e-4, atol = 1e-4)
+        np.testing.assert_allclose(result.c, self.c, rtol = 1e-4, atol = 1e-4)
         return volume_const
     #volume constant is 0.752252778063675
 
     def test_volume_benzene(self):
-        a = [ -0.01222658,   0.0466439,  1.93013602]
-        b = [  -1.5133306,  2.51680727,  -0.07040777]
-        c = [-2.69283929,  -1.61855984,  0.02205633]
-        center = np.array([1.49194902e-04, 4.70517138e-05,  -1.71050511e-04])
-        gaussian = Gaussian.from_axes(a, b, c, center)
-        volume_const = gaussian.volume_constant(a, b, c, center)
-        result = Gaussian.from_axes(a, b, c, center)
-        np.testing.assert_allclose(result.a, a, rtol = 1e-4, atol = 1e-4)  
-        np.testing.assert_allclose(result.b, b, rtol = 1e-4, atol = 1e-4)
-        np.testing.assert_allclose(result.c, c, rtol = 1e-4, atol = 1e-4)
+        self.a = [ -0.01222658,   0.0466439,  1.93013602]
+        self.b = [  -1.5133306,  2.51680727,  -0.07040777]
+        self.c = [-2.69283929,  -1.61855984,  0.02205633]
+        self.center = np.array([1.49194902e-04, 4.70517138e-05,  -1.71050511e-04])
+        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        volume_const = gaussian.volume_constant()
+        result = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        np.testing.assert_allclose(result.a, self.a, rtol = 1e-4, atol = 1e-4)  
+        np.testing.assert_allclose(result.b, self.b, rtol = 1e-4, atol = 1e-4)
+        np.testing.assert_allclose(result.c, self.c, rtol = 1e-4, atol = 1e-4)
         return volume_const
     #volume constant is 0.7522527780636749
 
     def test_volume_ethane(self):
-        a = [ -0.0891971,   -0.54384129,  1.69825358]
-        b = [  0.00874386,  1.70106077,  0.54519951]
-        c = [-2.45457096,  0.04891636,  -0.11325628]
-        center = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
-        gaussian = Gaussian.from_axes(a, b, c, center)
-        volume_const = gaussian.volume_constant(a, b, c, center)
-        result = Gaussian.from_axes(a, b, c, center)
-        np.testing.assert_allclose(result.a, a, rtol = 1e-4, atol = 1e-4)  
-        np.testing.assert_allclose(result.b, b, rtol = 1e-4, atol = 1e-4)
-        np.testing.assert_allclose(result.c, c, rtol = 1e-4, atol = 1e-4)
+        self.a = [ -0.0891971,   -0.54384129,  1.69825358]
+        self.b = [  0.00874386,  1.70106077,  0.54519951]
+        self.c = [-2.45457096,  0.04891636,  -0.11325628]
+        self.center = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        volume_const = gaussian.volume_constant()
+        result = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        np.testing.assert_allclose(result.a, self.a, rtol = 1e-4, atol = 1e-4)  
+        np.testing.assert_allclose(result.b, self.b, rtol = 1e-4, atol = 1e-4)
+        np.testing.assert_allclose(result.c, self.c, rtol = 1e-4, atol = 1e-4)
         return volume_const
     #volume constant is 0.7522527780636752
+
+    def test_grid_volume(self):
+        self.a = [1, 0, 0]
+        self.b = [0, 1, 0]
+        self.c = [0, 0, 1]
+        self.center = np.array([0, 0, 0])
+        expected_volume = 4/3 * np.pi 
+        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        volume = gaussian.grid_volume()
+        np.testing.assert_allclose(expected_volume,volume, rtol=1e-04, atol=1e-04) 
+
+    def test_row_matrix_multiplication(self):
+        A = np.array([[-1, -1, -1]])
+        B = np.array([[1,0,0], [0,1,0], [0,0,1]])
+        expected_result = np.array([-1, -1, -1])
+        result = row_matrix_multiplication(A, B)
+        np.testing.assert_allclose(expected_result, result)
+    
+    def test_matrix_multiplication_column(self):
+        A = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        B = np.array([[-1], [-1], [-1]])
+        expected_result = np.array([-1, -1, -1])
+        result = matrix_multiplication_column(A, B)
+        np.testing.assert_allclose(expected_result, result)
+
+    def test_matrix_multiplication_row_column(self):
+        A = np.array([[-1,-1,-1]])
+        B = np.array([[-1], [-1], [-1]])
+        expected_result = np.array([3])
+        result = matrix_multiplication_row_column(A, B)
+        np.testing.assert_allclose(expected_result, result)
+
     
     
     
@@ -146,6 +178,41 @@ class TestGaussian(unittest.TestCase):
     
     
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     '''
     def test_volume_constant_smiles1(self):
         a = [  0.03066212,   3.17282733,  -3.55495418]

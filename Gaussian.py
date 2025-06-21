@@ -49,6 +49,29 @@ def matrix_multiplication(A, B):
                 result[i][j] += (A[i][k] * B[k][j] )
     return np.array(result)
 
+def row_matrix_multiplication(A: NDArray, B):
+    #specific for 1x3 and 3x3 matrices
+    result = [0,0,0]
+    for j in range(3):
+        for k in range(3):
+            result[j] += (A[0][j] * B[k][j] )
+    return np.array(result) 
+
+def matrix_multiplication_column(A, B):
+     #specific for 3 x 3 and 3 x 1 matrices
+    result = [0, 0, 0]
+    for i in range(3):
+        for k in range(3):
+            result[i] += (B[k][0] * A[k][i])
+    return np.array(result)
+
+def matrix_multiplication_row_column(A,B):
+    result = [0]
+    for k in range(3):
+        result[0] += A[0][k] * B[k][0]
+    return np.array(result)
+
+
 def ellipse_volume(a, b, c,):
         lengtha = np.linalg.norm(a)
         lengthb = np.linalg.norm(b)
@@ -64,8 +87,9 @@ class Gaussian:
     a: NDArray
     b: NDArray
     c: NDArray
+    matrixA: NDArray
 
-    def __init__(self, covariance_inverse_matrix: np.ndarray, center: np.ndarray):
+    def __init__(self, covariance_inverse_matrix: np.ndarray, center: np.ndarray, matrixA: np.ndarray) -> None:
         self.convariance_matrix_inverse = covariance_inverse_matrix
         self.covariance_matrix = inverse_of_matrix(covariance_inverse_matrix)
         self.center = center
@@ -73,6 +97,7 @@ class Gaussian:
         self.a = ellipse.axes[0]
         self.b = ellipse.axes[1]
         self.c = ellipse.axes[2]
+        self.matrixA = matrixA
 
     
 
@@ -100,12 +125,54 @@ class Gaussian:
         UD = matrix_multiplication(matrixU, matrixD)
         matrixA = matrix_multiplication(UD, transposeU)
 
-        return Gaussian(matrixA, center)  
+        return cls(matrixA, center, matrixA)
     
-    def volume_constant(self, a, b, c, center):
+    def volume_constant(self):
         det = deteriminant_of_matrix(self.convariance_matrix_inverse)
-        volume = ellipse_volume(a , b, c)
+        volume = ellipse_volume(self.a , self.b, self.c)
         N = (det / (np.pi **3))** 0.5 * volume
         return N
+    
+    def grid_volume(self):
+        # Create a grid of points in 3D space
+        lengtha = np.linalg.norm(self.a)
+        lengthb = np.linalg.norm(self.b)
+        lengthc = np.linalg.norm(self.c)
+        lengths = [lengtha, lengthb, lengthc]
+        longest_item = 0
+        second_longest_item = 0
+        short_item = 0
+        for length in lengths:
+            if length > int(longest_item):
+                second_longest_item = longest_item
+                longest_item = length
+        x = np.linspace(self.center[0]-longest_item, self.center[0]+ longest_item, 200)
+        y = np.linspace(self.center[1]-longest_item, self.center[1]+ longest_item, 200)
+        z = np.linspace(self.center[2]-longest_item, self.center[2]+ longest_item, 200)
+        points_in_ellipse = 0 
+        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        matrixA = gaussian.matrixA
+        for i in x:
+                for j in y:
+                        for k in z:
+                                point = np.array([[i - self.center[0]], [j - self.center[1]], [k - self.center[2]]])
+                                transpose_r = np.transpose(point)
+                                XTG = row_matrix_multiplication(transpose_r, matrixA)
+                                value = matrix_multiplication_row_column([XTG], point)
+                                if value < 1:
+                                    points_in_ellipse += 1
+        dx = 2 * longest_item / 200
+        dy = 2 * longest_item / 200
+        dz = 2 * longest_item / 200
+        point_volume = dx * dy * dz
+        ellipse_volume = points_in_ellipse * point_volume
+        return ellipse_volume
+    
+
+    
+
+
+
+                    
     
     
