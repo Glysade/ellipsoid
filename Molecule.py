@@ -268,8 +268,7 @@ if __name__ == '__main__':
     smiles = args.smiles
     if not smiles:
         print('Using default smiles')
-        #smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'  
-        smiles = 'CC'
+        smiles = 'Cc1c(cc([nH]1)C(=O)NC2CCN(CC2)c3ccc4ccccc4n3)Br'  
         #smiles = 'CC(C)C[C@H](NC(=O)[C@H](CC(=O)O)NC(=O)[C@H](Cc1ccccc1)NC(=O)[C@H](CO)NC(=O)[C@@H]1CCCN1C(=O)[C@H](CCC(N)=O)NC(=O)[C@@H](N)CS)C(=O)N[C@@H](CCC(N)=O)C(=O)N[C@@H](CS)C(=O)O'
         # In the smiles a period is used to separate multiple molecules- so this smiles is 4 organic compounds and a bunch of salts
         # We can only deal with single molecules, so I've selected the first

@@ -1,3 +1,4 @@
+import math
 from typing import List
 import numpy as np
 from numpy.typing import NDArray
@@ -133,41 +134,95 @@ class Gaussian:
         N = (det / (np.pi **3))** 0.5 * volume
         return N
     
-    def grid_volume(self):
+    def grid_volume(self, number_of_points):
         # Create a grid of points in 3D space
         lengtha = np.linalg.norm(self.a)
         lengthb = np.linalg.norm(self.b)
         lengthc = np.linalg.norm(self.c)
         lengths = [lengtha, lengthb, lengthc]
-        longest_item = 0
-        second_longest_item = 0
-        short_item = 0
-        for length in lengths:
-            if length > int(longest_item):
-                second_longest_item = longest_item
-                longest_item = length
-        x = np.linspace(self.center[0]-longest_item, self.center[0]+ longest_item, 200)
-        y = np.linspace(self.center[1]-longest_item, self.center[1]+ longest_item, 200)
-        z = np.linspace(self.center[2]-longest_item, self.center[2]+ longest_item, 200)
-        points_in_ellipse = 0 
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
-        matrixA = gaussian.matrixA
+        longest_item = max(lengths)    
+        x = np.linspace(self.center[0]-longest_item, self.center[0]+ longest_item, number_of_points)
+        y = np.linspace(self.center[1]-longest_item, self.center[1]+ longest_item, number_of_points)
+        z = np.linspace(self.center[2]-longest_item, self.center[2]+ longest_item, number_of_points)
+        points_in_ellipse = 0
+        fake_points = 0
+        matrixA = self.matrixA
         for i in x:
                 for j in y:
                         for k in z:
                                 point = np.array([[i - self.center[0]], [j - self.center[1]], [k - self.center[2]]])
                                 transpose_r = np.transpose(point)
                                 XTG = row_matrix_multiplication(transpose_r, matrixA)
-                                value = matrix_multiplication_row_column([XTG], point)
-                                if value < 1:
+                                value = matrix_multiplication_row_column([XTG], point) 
+                                fake_match = False
+                                value_match = False       
+                                if (i/lengtha)**2 + (j/lengthb)**2 + (k/lengthc)**2 < 1:
+                                     fake_points += 1
+                                     fake_match = True
+                                if value[0] < 1.0:
+                                    if math.isnan(value[0]) or math.isinf(value[0]):
+                                        print("Warning: NaN or Inf value encountered in Gaussian grid volume calculation.")
                                     points_in_ellipse += 1
-        dx = 2 * longest_item / 200
-        dy = 2 * longest_item / 200
-        dz = 2 * longest_item / 200
+                                    value_match = True
+                                if not fake_match and value_match:
+                                    print(f"Point ({i}, {j}, {k}) is inside the ellipse.")
+                                if fake_match and not value_match:
+                                    print(f"Point ({i}, {j}, {k}) is outside the ellipse.")
+
+        dx = 2 * longest_item / number_of_points
+        dy = 2 * longest_item / number_of_points
+        dz = 2 * longest_item / number_of_points
         point_volume = dx * dy * dz
         ellipse_volume = points_in_ellipse * point_volume
         return ellipse_volume
     
+
+    def experiment_volume(self, number_of_points):
+         #matrix A is the same 
+        matrixA = self.matrixA
+        inverse_A = inverse_of_matrix(matrixA)
+        scale = 1.2
+        max_x = (inverse_A[0][0] **0.5)*1.2 
+        max_y = (inverse_A[1][1] **0.5)*1.2
+        max_z = (inverse_A[2][2] **0.5)*1.2
+        number_of_points = int(number_of_points*scale)
+        lengtha = np.linalg.norm(self.a)
+        lengthb = np.linalg.norm(self.b)
+        lengthc = np.linalg.norm(self.c)
+        x = np.linspace(self.center[0]-max_x, self.center[0]+ max_x, number_of_points)
+        y = np.linspace(self.center[1]-max_y, self.center[1]+ max_y, number_of_points)
+        z = np.linspace(self.center[2]-max_z, self.center[2]+ max_z, number_of_points)
+        points_in_ellipse = 0
+        fake_points = 0
+        matrixA = self.matrixA
+        for i in x:
+                for j in y:
+                        for k in z:
+                                point = np.array([[i - self.center[0]], [j - self.center[1]], [k - self.center[2]]])
+                                transpose_r = np.transpose(point)
+                                XTG = row_matrix_multiplication(transpose_r, matrixA)
+                                value = matrix_multiplication_row_column([XTG], point) 
+                                fake_match = False
+                                value_match = False       
+                                if (i/lengtha)**2 + (j/lengthb)**2 + (k/lengthc)**2 <= 1:
+                                     fake_points += 1
+                                     fake_match = True
+                                if value[0] <= 1.0 :
+                                    if math.isnan(value[0]) or math.isinf(value[0]):
+                                        print("Warning: NaN or Inf value encountered in Gaussian grid volume calculation.")
+                                    points_in_ellipse += 1
+                                    value_match = True
+                                if not fake_match and value_match:
+                                    print(f"Point ({i}, {j}, {k}) is inside the ellipse.")
+                                if fake_match and not value_match:
+                                    print(f"Point ({i}, {j}, {k}) is outside the ellipse.")
+
+        dx = 2 * max_x / number_of_points
+        dy = 2 * max_y / number_of_points
+        dz = 2 * max_z / number_of_points
+        point_volume = dx * dy * dz
+        ellipse_volume = points_in_ellipse * point_volume
+        return ellipse_volume
 
     
 
