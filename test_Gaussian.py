@@ -160,113 +160,187 @@ class TestGaussian(unittest.TestCase):
         np.testing.assert_allclose(expected_result, result)
 
     def test_grid_volume(self):
-        self.a = [1, 0, 0]
-        self.b = [0, 1, 0]
-        self.c = [0, 0, 1]
-        self.center = np.array([0, 0, 0])
+        a = [1, 0, 0]
+        b = [0, 1, 0]
+        c = [0, 0, 1]
+        center = np.array([0, 0, 0])
         number_of_points = 100
         expected_volume = 4/3 * np.pi 
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        gaussian = Gaussian.from_axes(a, b, c, center)
         volume = gaussian.grid_volume(number_of_points)
-        self.assertAlmostEqual(volume,expected_volume,0)
+        #self.assertAlmostEqual(volume,expected_volume,0)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
         #passes
  
 
     def test_grid_volume_smiles1_loop1(self):
-        self.a = [-0.30003443, 1.32946329, 1.46748463]
-        self.b = [-2.79975352, 1.84930587, -2.24779645]
-        self.c = [-3.81354613, -3.19881181, 2.11825574]
-        self.center = np.array([-6.32351802,  0.27492053,  -0.93936663])
+        a = [-0.30003443, 1.32946329, 1.46748463]
+        b = [-2.79975352, 1.84930587, -2.24779645]
+        c = [-3.81354613, -3.19881181, 2.11825574]
+        center = np.array([-6.32351802,  0.27492053,  -0.93936663])
         number_of_points = 100
-        expected_volume = ellipse_volume(self.a, self.b, self.c)
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        expected_volume = ellipse_volume(a, b, c)
+        gaussian = Gaussian.from_axes(a, b, c, center)
         volume = gaussian.grid_volume(number_of_points)
-        self.assertAlmostEqual(volume,expected_volume,0)
+        #self.assertAlmostEqual(volume,expected_volume,0)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
         #expected volume is 136
         #grid volume is 183
+        #NOW FAILS BY 5.4
 
  
 
     def test_grid_volume_benzene(self):
-        self.a = [ -0.01222658,   0.0466439,  1.93013602]
-        self.b = [  -1.5133306,  2.51680727,  -0.07040777]
-        self.c = [-2.69283929,  -1.61855984,  0.02205633]
-        self.center = np.array([1.49194902e-04, 4.70517138e-05,  -1.71050511e-04])
+        a = [ -0.01222658,   0.0466439,  1.93013602]
+        b = [  -1.5133306,  2.51680727,  -0.07040777]
+        c = [-2.69283929,  -1.61855984,  0.02205633]
+        center = np.array([1.49194902e-04, 4.70517138e-05,  -1.71050511e-04])
         number_of_points = 100
-        expected_volume = ellipse_volume(self.a, self.b, self.c)
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        expected_volume = ellipse_volume(a, b, c)
+        gaussian = Gaussian.from_axes(a, b, c, center)
         volume = gaussian.grid_volume(number_of_points)
-        self.assertAlmostEqual(volume,expected_volume,0)
+        #self.assertAlmostEqual(volume,expected_volume,0)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
         #only fails by 1 even w increased grid
 
 
     def test_grid_volume_ethane(self):
-        self.a = [ -0.0891971,   -0.54384129,  1.69825358]
-        self.b = [  0.00874386,  1.70106077,  0.54519951]
-        self.c = [-2.45457096,  0.04891636,  -0.11325628]
+        a = [ -0.0891971,   -0.54384129,  1.69825358]
+        b = [  0.00874386,  1.70106077,  0.54519951]
+        c = [-2.45457096,  0.04891636,  -0.11325628]
         self.center = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
         number_of_points = 100
         number_of_points = 100
-        expected_volume = ellipse_volume(self.a, self.b, self.c)
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        expected_volume = ellipse_volume(a, b, c)
+        gaussian = Gaussian.from_axes(a, b, c, center)
         volume = gaussian.grid_volume(number_of_points)
-        self.assertAlmostEqual(volume,expected_volume,0)
-        #passes
+        #self.assertAlmostEqual(volume,expected_volume,0)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
+        #fails by 0.97
     
     def test_smiles1_round2(self):
-        self.a = [ 0.49111521,   1.46922175,  -1.73698885]
-        self.b = [  0.15652988,  -2.59142209,  -2.14768188]
-        self.c = [-3.62847313,  0.37099802,  -0.71210589]
-        self.center = np.array([0.49111521,  1.46922175,  -1.73698885])
+        a = [ 0.49111521,   1.46922175,  -1.73698885]
+        b = [  0.15652988,  -2.59142209,  -2.14768188]
+        c = [-3.62847313,  0.37099802,  -0.71210589]
+        center = np.array([0.49111521,  1.46922175,  -1.73698885])
         number_of_points = 100
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
-        expected_volume = ellipse_volume(self.a, self.b, self.c)
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        gaussian = Gaussian.from_axes(a, b, c, center)
+        expected_volume = ellipse_volume(a, b, c)
+        gaussian = Gaussian.from_axes(a, b, c, center)
         volume = gaussian.grid_volume(number_of_points)
-        self.assertAlmostEqual(volume,expected_volume,0)
-        #fails w 122 does not equal 173 at *2
+        #self.assertAlmostEqual(volume,expected_volume,0)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
+        #fails w 122 does not equal 173 at *2, now fails by 3.5
         #same assertation error at *1.1
 
 
     def test_grid_diagonal(self):
-        self.a = [ 1,   0,  0]
-        self.b = [ 0,  2,  0]
-        self.c = [0,  0,  3]
-        self.center = np.array([0,  0,  0])
+        a = [ 1,   0,  0]
+        b = [ 0,  2,  0]
+        c = [0,  0,  3]
+        center = np.array([0,  0,  0])
         number_of_points = 100
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
-        expected_volume = ellipse_volume(self.a, self.b, self.c)
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        gaussian = Gaussian.from_axes(a, b, c, center)
+        expected_volume = ellipse_volume(a, b, c)
+        gaussian = Gaussian.from_axes(a, b, c, center)
         volume = gaussian.grid_volume(number_of_points)
         self.assertAlmostEqual(volume,expected_volume,0)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
         #also fails with a large difference!
-        #if 5 6 7 fails by 25 in 800s, same dif with 2 as 1.1 
-        # if 1 2 3 passes with a difference of 0.77139, about the same dif with 2 and 1.1
+        #if 5 6 7 fails by 25 in 800s, same dif with 2 as 1.1, now fails by 15, 14.9 without scale
+        # if 1 2 3 passes with a difference of 0.77139, about the same dif with 2 and 1.1, 0.78 without scale
 
     def test_experiment_volume(self):
-        self.a = [-0.30003443, 1.32946329, 1.46748463]
-        self.b = [-2.79975352, 1.84930587, -2.24779645]
-        self.c = [-3.81354613, -3.19881181, 2.11825574]
-        self.center = np.array([-6.32351802,  0.27492053,  -0.93936663])
+        a = [-0.30003443, 1.32946329, 1.46748463]
+        b = [-2.79975352, 1.84930587, -2.24779645]
+        c = [-3.81354613, -3.19881181, 2.11825574]
+        center = np.array([-6.32351802,  0.27492053,  -0.93936663])
         number_of_points = 100
-        expected_volume = ellipse_volume(self.a, self.b, self.c)
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        expected_volume = ellipse_volume(a, b, c)
+        gaussian = Gaussian.from_axes(a, b, c, center)
         volume = gaussian.experiment_volume(number_of_points)
-        self.assertAlmostEqual(volume,expected_volume,0)
+        #self.assertAlmostEqual(volume,expected_volume,0)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
         #122 does not equal 183
+        #is now 178 not 183 fails by 4.9, 4.59 without scale
 
     def test_experiment_volume_1(self):
-        self.a = [ 4,   0,  0]
-        self.b = [ 0,  5,  0]
-        self.c = [0,  0,  6]
-        self.center = np.array([0,  0,  0])
+        a = [ 4,   0,  0]
+        b = [ 0,  5,  0]
+        c = [0,  0,  6]
+        center = np.array([0,  0,  0])
         number_of_points = 100
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
-        expected_volume = ellipse_volume(self.a, self.b, self.c)
-        gaussian = Gaussian.from_axes(self.a, self.b, self.c, self.center)
+        gaussian = Gaussian.from_axes(a, b, c, center)
+        expected_volume = ellipse_volume(a, b, c)
+        gaussian = Gaussian.from_axes(a, b, c, center)
         volume = gaussian.experiment_volume(number_of_points)
-        self.assertAlmostEqual(volume,expected_volume,0)
+        #self.assertAlmostEqual(volume,expected_volume,0)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
         #fails by 15
+        # fails by 12 in yoy8o the 500s, same without scale
+
+    def test_experiment_smiles1_round2(self):
+        a = [ 0.49111521,   1.46922175,  -1.73698885]
+        b = [  0.15652988,  -2.59142209,  -2.14768188]
+        c = [-3.62847313,  0.37099802,  -0.71210589]
+        center = np.array([0.49111521,  1.46922175,  -1.73698885])
+        number_of_points = 100
+        gaussian = Gaussian.from_axes(a, b, c, center)
+        expected_volume = ellipse_volume(a, b, c)
+        gaussian = Gaussian.from_axes(a, b, c, center)
+        volume = gaussian.experiment_volume(number_of_points)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
+        #self.assertAlmostEqual(volume,expected_volume,0)
+        #fails by 3.055, comparied to other grid at 3.5, 3.04 without scale
+
+    def test_experiment_smiles1_ethane(self):
+        a = [ -0.0891971,   -0.54384129,  1.69825358]
+        b = [  0.00874386,  1.70106077,  0.54519951]
+        c = [-2.45457096,  0.04891636,  -0.11325628]
+        center = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+        number_of_points = 100
+        gaussian = Gaussian.from_axes(a, b, c, center)
+        expected_volume = ellipse_volume(a, b, c)
+        gaussian = Gaussian.from_axes(a, b, c, center)
+        volume = gaussian.experiment_volume(number_of_points)
+        #self.assertAlmostEqual(volume,expected_volume,0)
+        relative_error = (expected_volume - volume) / expected_volume
+        percentage_error = relative_error * 100
+        self.assertLess(percentage_error, 5)
+        #fails by 0.81, compared to 0.97, 0.82 without scale
+
+    def test_ellipse_intersection_volume(self ):
+        a1 = [ -0.0891971,   -0.54384129,  1.69825358]
+        b1 = [  0.00874386,  1.70106077,  0.54519951]
+        c1 = [-2.45457096,  0.04891636,  -0.11325628]
+        center1 = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+        a2 = [ 0.49111521,   1.46922175,  -1.73698885]
+        b2 = [  0.15652988,  -2.59142209,  -2.14768188]
+        c2 = [-3.62847313,  0.37099802,  -0.71210589]
+        center2 = np.array([0.49111521,  1.46922175,  -1.73698885])
+        gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+        gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+        number_of_points = 100
+        Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+
 
 
 

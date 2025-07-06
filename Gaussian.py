@@ -152,21 +152,21 @@ class Gaussian:
                         for k in z:
                                 point = np.array([[i - self.center[0]], [j - self.center[1]], [k - self.center[2]]])
                                 transpose_r = np.transpose(point)
-                                XTG = row_matrix_multiplication(transpose_r, matrixA)
-                                value = matrix_multiplication_row_column([XTG], point) 
+                                XTG = np.matmul(transpose_r, matrixA)
+                                value = np.matmul(XTG, point) 
                                 fake_match = False
                                 value_match = False       
-                                if (i/lengtha)**2 + (j/lengthb)**2 + (k/lengthc)**2 < 1:
-                                     fake_points += 1
-                                     fake_match = True
+                                #if (i/lengtha)**2 + (j/lengthb)**2 + (k/lengthc)**2 < 1:
+                                 #    fake_points += 1
+                                  #   fake_match = True
                                 if value[0] < 1.0:
                                     if math.isnan(value[0]) or math.isinf(value[0]):
                                         print("Warning: NaN or Inf value encountered in Gaussian grid volume calculation.")
                                     points_in_ellipse += 1
                                     value_match = True
-                                if not fake_match and value_match:
+                                #if not fake_match and value_match:
                                     print(f"Point ({i}, {j}, {k}) is inside the ellipse.")
-                                if fake_match and not value_match:
+                                #if fake_match and not value_match:
                                     print(f"Point ({i}, {j}, {k}) is outside the ellipse.")
 
         dx = 2 * longest_item / number_of_points
@@ -176,15 +176,68 @@ class Gaussian:
         ellipse_volume = points_in_ellipse * point_volume
         return ellipse_volume
     
+    def inside_ellipse(self, x, y, z):
+        point = np.array([[x - self.center[0]], [y - self.center[1]], [z - self.center[2]]])
+        transpose_r = np.transpose(point)
+        XTG = np.matmul(transpose_r, self.matrixA)
+        value = np.matmul(XTG, point) 
+        if value[0] <= 1.0:
+            return True
+        else:
+            return False
+    
 
     def experiment_volume(self, number_of_points):
          #matrix A is the same 
         matrixA = self.matrixA
         inverse_A = inverse_of_matrix(matrixA)
         scale = 1.2
-        max_x = (inverse_A[0][0] **0.5)*1.2 
-        max_y = (inverse_A[1][1] **0.5)*1.2
-        max_z = (inverse_A[2][2] **0.5)*1.2
+        max_x = (inverse_A[0][0] **0.5)
+        max_y = (inverse_A[1][1] **0.5)
+        max_z = (inverse_A[2][2] **0.5)
+        number_of_points = int(number_of_points*scale)
+        lengtha = np.linalg.norm(self.a)
+        lengthb = np.linalg.norm(self.b)
+        lengthc = np.linalg.norm(self.c)
+        x = np.linspace(self.center[0]-max_x, self.center[0]+ max_x, number_of_points)
+        y = np.linspace(self.center[1]-max_y, self.center[1]+ max_y, number_of_points)
+        z = np.linspace(self.center[2]-max_z, self.center[2]+ max_z, number_of_points)
+        points_in_ellipse = 0
+        matrixA = self.matrixA
+        for i in x:
+                for j in y:
+                        for k in z:
+                                point = np.array([[i - self.center[0]], [j - self.center[1]], [k - self.center[2]]])
+                                transpose_r = np.transpose(point)
+                                XTG = np.matmul(transpose_r, matrixA)
+                                value = np.matmul(XTG, point) 
+                                value_match = False       
+                                if value[0] <= 1.0 :
+                                    if math.isnan(value[0]) or math.isinf(value[0]):
+                                        print("Warning: NaN or Inf value encountered in Gaussian grid volume calculation.")
+                                    points_in_ellipse += 1
+                                    value_match = True
+
+
+        dx = 2 * max_x / number_of_points
+        dy = 2 * max_y / number_of_points
+        dz = 2 * max_z / number_of_points
+        point_volume = dx * dy * dz
+        ellipse_volume = points_in_ellipse * point_volume
+        return ellipse_volume
+    
+    
+        
+
+    def experiment_volume_fake_points(self, number_of_points):
+         #matrix A is the same 
+        matrixA = self.matrixA
+        inverse_A = inverse_of_matrix(matrixA)
+        scale = 1.2
+        max_x = (inverse_A[0][0] **0.5)
+        #removind scale of 1.2 and running again
+        max_y = (inverse_A[1][1] **0.5)
+        max_z = (inverse_A[2][2] **0.5)
         number_of_points = int(number_of_points*scale)
         lengtha = np.linalg.norm(self.a)
         lengthb = np.linalg.norm(self.b)
@@ -200,8 +253,8 @@ class Gaussian:
                         for k in z:
                                 point = np.array([[i - self.center[0]], [j - self.center[1]], [k - self.center[2]]])
                                 transpose_r = np.transpose(point)
-                                XTG = row_matrix_multiplication(transpose_r, matrixA)
-                                value = matrix_multiplication_row_column([XTG], point) 
+                                XTG = np.matmul(transpose_r, matrixA)
+                                value = np.matmul(XTG, point) 
                                 fake_match = False
                                 value_match = False       
                                 if (i/lengtha)**2 + (j/lengthb)**2 + (k/lengthc)**2 <= 1:
@@ -221,8 +274,76 @@ class Gaussian:
         dy = 2 * max_y / number_of_points
         dz = 2 * max_z / number_of_points
         point_volume = dx * dy * dz
-        ellipse_volume = points_in_ellipse * point_volume
+        volume = points_in_ellipse * point_volume
         return ellipse_volume
+    
+    @classmethod
+    def ellipse_intersection(cls, axis1, axis2, number_of_points):
+        gaussianA = Gaussian.from_axes(axis1.a, axis1.b, axis1.c, axis1.center)
+        gaussianB = Gaussian.from_axes(axis2.a, axis2.b, axis2.c, axis2.center)
+
+        return cls.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+
+    @classmethod
+    def ellipse_intersection_volume(cls, gaussianA, gaussianB, number_of_points):
+        matrixA = gaussianA.matrixA
+        inverse_A = inverse_of_matrix(matrixA)
+        #min is smallest axis
+        max_xA = (inverse_A[0][0] **0.5) + gaussianA.center[0] 
+        max_yA = (inverse_A[1][1] **0.5) + gaussianA.center[1]
+        max_zA = (inverse_A[2][2] **0.5) + gaussianA.center[2]
+        min_xA = gaussianA.center[0] - (inverse_A[0][0] **0.5) 
+        min_yA = gaussianA.center[1] - (inverse_A[1][1] **0.5) 
+        min_zA = gaussianA.center[2] - (inverse_A[2][2] **0.5) 
+        matrixB = gaussianB.matrixA
+        inverse_B = inverse_of_matrix(matrixB)
+        max_xB = (inverse_B[0][0] **0.5) + gaussianB.center[0]
+        max_yB = (inverse_B[1][1] **0.5) + gaussianB.center[1]
+        max_zB = (inverse_B[2][2] **0.5) + gaussianB.center[2]
+        min_xB = gaussianB.center[0] - (inverse_B[0][0] **0.5) 
+        min_yB = gaussianB.center[1] - (inverse_B[1][1] **0.5) 
+        min_zB = gaussianB.center[2] - (inverse_B[2][2] **0.5) 
+        min_x = min(max_xA, max_xB)
+        min_y = min(max_yA, max_yB)
+        min_z = min(max_zA, max_zB)
+        max_x = max(min_xA, min_xB)
+        max_y = max(min_yA, min_yB)
+        max_z = max(min_zA, min_zB)
+        number_of_points = int(number_of_points)
+        x = np.linspace(max_x, min_x, number_of_points)
+        y = np.linspace(max_x, min_y, number_of_points)
+        z = np.linspace(max_z, min_z, number_of_points)
+        points_in_A = 0
+        points_in_B = 0
+        points_in_intersection = 0
+        for i in x:
+                for j in y:
+                        for k in z:
+                                point = np.array([[i], [j], [k]])
+                                transpose_r = np.transpose(point)
+                                XTGA = np.matmul(transpose_r, matrixA)
+                                XTGB = np.matmul(transpose_r, matrixB)
+                                valueA = np.matmul(XTGA, point) 
+                                valueB = np.matmul(XTGB, point) 
+                                if gaussianA.inside_ellipse(i, j, k) == True:
+                                     points_in_A += 1
+                                if gaussianA.inside_ellipse(i, j, k) == False:
+                                    continue
+                                if gaussianB.inside_ellipse(i, j, k) == True:
+                                     points_in_B += 1
+                                if gaussianA.inside_ellipse(i, j, k) == False:
+                                     continue
+                                if gaussianA.inside_ellipse(i, j, k) == True and gaussianB.inside_ellipse(i, j, k) == True:
+                                    points_in_intersection += 1
+
+        dx = 2 * max_x / number_of_points
+        dy = 2 * max_y / number_of_points
+        dz = 2 * max_z / number_of_points
+        point_volume = dx * dy * dz
+        ellipse_volume = points_in_intersection * point_volume
+        return ellipse_volume
+
+         
 
     
 
