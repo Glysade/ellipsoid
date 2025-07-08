@@ -335,13 +335,35 @@ class Gaussian:
                                      continue
                                 if gaussianA.inside_ellipse(i, j, k) == True and gaussianB.inside_ellipse(i, j, k) == True:
                                     points_in_intersection += 1
-
-        dx = 2 * max_x / number_of_points
-        dy = 2 * max_y / number_of_points
-        dz = 2 * max_z / number_of_points
+        dx = (min_x - max_x) / number_of_points
+        dy = (min_y - max_y) / number_of_points
+        dz = (min_z - max_z) / number_of_points
         point_volume = dx * dy * dz
         ellipse_volume = points_in_intersection * point_volume
         return ellipse_volume
+
+    @classmethod
+    def gaussian_intersection(cls, gaussianA, gaussianB, number_of_points):
+        matrixA = gaussianA.matrixA
+        inverse_A = inverse_of_matrix(matrixA)
+        matrixB = gaussianB.matrixA
+        inverse_B = inverse_of_matrix(matrixB)
+        C = 0.75225 #w pi
+        u = np.subtract(gaussianA.center, gaussianB.center)
+        centerB = 0
+        P = matrixA + matrixB
+        PI = np.linalg.inv(P)
+        PIA= np.matmul(PI, matrixA)
+        v = np.matmul(PIA, u)
+        vT = np.transpose(v)
+        vTP = np.matmul(vT, P)
+        vTpv = np.matmul(vTP, v)
+        uT = np.transpose(u)
+        uTA = np.matmul(uT, matrixA)
+        uTAu = np.matmul(uTA, u)
+        #not absolute value, magnitude
+        volume = (( np.pi ** 3 / deteriminant_of_matrix(P))) ** 0.5 * (C ** 2) * np.exp(vTpv - uTAu)
+        return volume
 
          
 
