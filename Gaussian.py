@@ -364,8 +364,32 @@ class Gaussian:
         #not absolute value, magnitude
         volume = (( np.pi ** 3 / deteriminant_of_matrix(P))) ** 0.5 * (C ** 2) * np.exp(vTpv - uTAu)
         return volume
+    
+    @classmethod
+    def plot_gaussian_intersection(cls, gaussianA, gaussianB, number_of_points):
+        matrixA = gaussianA.matrixA
+        inverse_A = inverse_of_matrix(matrixA)
+        matrixB = gaussianB.matrixA
+        inverse_B = inverse_of_matrix(matrixB)
+        C = 0.75225 #w pi
+        u = np.subtract(gaussianA.center, gaussianB.center)
+        centerB = 0
+        P = matrixA + matrixB
+        PI = np.linalg.inv(P)
+        PIA= np.matmul(PI, matrixA)
+        v = np.matmul(PIA, u)
+        quatratic = (x - center)P(x- r)
+        U, D, VT = la.svd(A)
+        axes_magnitudes = 1.0/np.sqrt(D)
+        axes = VT * axes_magnitudes[:, np.newaxis]
 
-         
+        ellipse = Ellipse(center = center, square_matrix = A, eigen_values = D, eigen_vectors = U, axes_magnitudes = axes_magnitudes, axes = axes, points = None, atom_idxs=None)
+        xareturn ellipse
+
+    #extract6 axis from P eith center v
+    #don;t need to iterate thru all the points
+    convert to quadratric 
+    v offset by origional translate j l/
 
     
 

@@ -326,6 +326,7 @@ class TestGaussian(unittest.TestCase):
         percentage_error = relative_error * 100
         self.assertLess(percentage_error, 5)
         #fails by 0.81, compared to 0.97, 0.82 without scale
+        #volume of 32
 
     def test_ellipse_intersection_volume(self ):
         a1 = [ -0.0891971,   -0.54384129,  1.69825358]
@@ -357,6 +358,38 @@ class TestGaussian(unittest.TestCase):
         volume = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
         volume2 = volume * 2
         #actual gaussian for plot axis
+        #two gaussians r the same
+
+    def test_ellipse_intersection_volume_gaussian_same(self ):
+        a1 = [ -0.0891971,   -0.54384129,  1.69825358]
+        b1 = [  0.00874386,  1.70106077,  0.54519951]
+        c1 = [-2.45457096,  0.04891636,  -0.11325628]
+        center1 = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+        a2 = [ -0.0891971,   -0.54384129,  1.69825358]
+        b2 = [  0.00874386,  1.70106077,  0.54519951]
+        c2 = [-2.45457096,  0.04891636,  -0.11325628]
+        center2 = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+        gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+        gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+        number_of_points = 100
+        volume = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+        volume2 = volume * 2
+        #8.73233
+        
+    def test_ellipse_intersection_volume_same(self ):
+        a1 = [ -0.0891971,   -0.54384129,  1.69825358]
+        b1 = [  0.00874386,  1.70106077,  0.54519951]
+        c1 = [-2.45457096,  0.04891636,  -0.11325628]
+        center1 = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+        a2 = [ -0.0891971,   -0.54384129,  1.69825358]
+        b2 = [  0.00874386,  1.70106077,  0.54519951]
+        c2 = [-2.45457096,  0.04891636,  -0.11325628]
+        center2 = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+        gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+        gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+        number_of_points = 100
+        volume = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+        #26
 
 
 
