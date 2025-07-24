@@ -506,8 +506,11 @@ class TestGaussian(unittest.TestCase):
             volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
             #48
             volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            math_volume = ellipse_volume(a1, b1, c1)
+            math_volume2 = math_volume * 2
             #91
             #factor of 0.5
+            #math volume 183
     
     def test_ellipse_intersection_volume_gaussian_comparison_same2(self ):
             a1 = [ -0.01222658,   0.0466439,  1.93013602]
@@ -524,8 +527,13 @@ class TestGaussian(unittest.TestCase):
             volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
             #19.85
             volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            math_volume = ellipse_volume(a1, b1, c1)
+            math_volume2 = math_volume * 2
             #71.25
             #facotr of 0.27
+            #math volume of 74
+
+
             #calculte volume of ellipse from axes
             #install octave 
 
@@ -545,8 +553,11 @@ class TestGaussian(unittest.TestCase):
             volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
             #567
             volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            math_volume = ellipse_volume(a1, b1, c1)
+            math_volume2 = math_volume * 2
             #1200
             #factor of 0.47
+            #math volume of 2135
 
     def test_ellipse_intersection_volume_gaussian_comparison_same4(self ):
             a1 = [ 4,   0,  0]
@@ -563,8 +574,11 @@ class TestGaussian(unittest.TestCase):
             volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
             #133
             volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            math_volume = ellipse_volume(a1, b1, c1)
+            math_volume2 = math_volume * 2
             #527
             #factor of 0.25
+            #math volume of 502
 
     def test_ellipse_intersection_volume_gaussian_comparison_same5(self ):
             a1 = [ -0.0891971,   -0.54384129,  1.69825358]
@@ -581,9 +595,12 @@ class TestGaussian(unittest.TestCase):
             volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
             #8.7
             volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            math_volume = ellipse_volume(a1, b1, c1)
+            math_volume2 = math_volume * 2
             #26.8
             #factor of 0.32
-        
+            #math volume is  32.8
+    
         
 
 
