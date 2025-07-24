@@ -73,7 +73,7 @@ The original paper substitutes $A$ and $B$ and $u$ back into the integral
 
 $$
 \begin{align*}
-\int_x f(x) dx =& \sqrt{\frac{\pi^3}{n^3|P|}}C^2e^{n({v^TPv - u^TAu})}
+\int_x f(x) dx =& \sqrt{\frac{\pi^3}{n^3|P|}}C^2e^{n({v^TPv - u^TAu})} \\
 A =& B \\
 u =& O \\
 v =& O, P = 2A, |P| = 8|A| \\
