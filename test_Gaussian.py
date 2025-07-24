@@ -391,7 +391,20 @@ class TestGaussian(unittest.TestCase):
         volume = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
         #26
 
-
+    def test_print_pymol_ellipse(self):
+        a1 = [ -0.0891971,   -0.54384129,  1.69825358]
+        b1 = [  0.00874386,  1.70106077,  0.54519951]
+        c1 = [-2.45457096,  0.04891636,  -0.11325628]
+        center1 = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+        a2 = [ 0.49111521,   1.46922175,  -1.73698885]
+        b2 = [  0.15652988,  -2.59142209,  -2.14768188]
+        c2 = [-3.62847313,  0.37099802,  -0.71210589]
+        center2 = np.array([0.49111521,  1.46922175,  -1.73698885])
+        gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+        gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+        number_of_points = 100
+        Gaussian.plot_gaussian_intersection(gaussianA, gaussianB, number_of_points)
+     
 
 
 

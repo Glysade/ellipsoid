@@ -2,8 +2,10 @@ import math
 from typing import List
 import numpy as np
 from numpy.typing import NDArray
+from dataclasses import dataclass
 
 from Molecule import quadratic_to_parametric
+import numpy.linalg as la
 
 def deteriminant_of_matrix(matrix):
     #det(M) = \(a(ei-fh)-b(di-fg)+c(dh-eg)\)
@@ -90,7 +92,8 @@ class Gaussian:
     c: NDArray
     matrixA: NDArray
 
-    def __init__(self, covariance_inverse_matrix: np.ndarray, center: np.ndarray, matrixA: np.ndarray) -> None:
+
+    def __init__(self, covariance_inverse_matrix: np.ndarray, center: np.ndarray) -> None:
         self.convariance_matrix_inverse = covariance_inverse_matrix
         self.covariance_matrix = inverse_of_matrix(covariance_inverse_matrix)
         self.center = center
@@ -98,7 +101,7 @@ class Gaussian:
         self.a = ellipse.axes[0]
         self.b = ellipse.axes[1]
         self.c = ellipse.axes[2]
-        self.matrixA = matrixA
+        self.matrixA = covariance_inverse_matrix
 
     
 
@@ -126,7 +129,7 @@ class Gaussian:
         UD = matrix_multiplication(matrixU, matrixD)
         matrixA = matrix_multiplication(UD, transposeU)
 
-        return cls(matrixA, center, matrixA)
+        return cls(matrixA, center)
     
     def volume_constant(self):
         det = deteriminant_of_matrix(self.convariance_matrix_inverse)
@@ -364,7 +367,7 @@ class Gaussian:
         #not absolute value, magnitude
         volume = (( np.pi ** 3 / deteriminant_of_matrix(P))) ** 0.5 * (C ** 2) * np.exp(vTpv - uTAu)
         return volume
-    
+
     @classmethod
     def plot_gaussian_intersection(cls, gaussianA, gaussianB, number_of_points):
         matrixA = gaussianA.matrixA
@@ -378,23 +381,62 @@ class Gaussian:
         PI = np.linalg.inv(P)
         PIA= np.matmul(PI, matrixA)
         v = np.matmul(PIA, u)
-        quatratic = (x - center)P(x- r)
-        U, D, VT = la.svd(A)
+        #might not be the most efficient, can revisitn
+        U, D, VT = la.svd(P)
         axes_magnitudes = 1.0/np.sqrt(D)
         axes = VT * axes_magnitudes[:, np.newaxis]
-
-        ellipse = Ellipse(center = center, square_matrix = A, eigen_values = D, eigen_vectors = U, axes_magnitudes = axes_magnitudes, axes = axes, points = None, atom_idxs=None)
-        xareturn ellipse
-
+        #gaussian rep for an ellipsoid 
+        intersection_gaussian = Gaussian(P, v + gaussianB.center)
+        gaussians = [gaussianA, gaussianB, intersection_gaussian]
+        Gaussian.print_pymol_ellipse(gaussians, 'gaussian_intersection')
+        
     #extract6 axis from P eith center v
     #don;t need to iterate thru all the points
-    convert to quadratric 
-    v offset by origional translate j l/
+    #convert to quadratric 
+    #v offset by origional translate j l/
+    #list of gaussions
+    @classmethod
+    def print_pymol_ellipse(cls, gaussians: List['Gaussian'], base: str) -> None:
 
-    
+        py_script = f'{base}.py'
+        with open(py_script, 'wt') as fh:
+            fh.write('from pymol.cgo import *\n')
+            fh.write("cmd.delete('all')\n") 
+            for ellipse_idx, gaussian in enumerate(gaussians):
+                ellipse = quadratic_to_parametric(gaussian.center, gaussian.matrixA)
+                center = ellipse.center
+                mag = ellipse.axes_magnitudes
+                rot = ellipse.eigen_vectors
+                drawCommand = f'tmp{ellipse_idx} = drawEllipsoid([0.85, 0.85, 1.00] '
+                for i in range(3):
+                    drawCommand = drawCommand + f', {center[i]}'
+                for i in range(3):
+                    drawCommand = drawCommand + f', {mag[i]}'
+                for i in range(3):
+                    for j in range(3):
+                        drawCommand = drawCommand + f', {rot[i][j]}'
+                drawCommand = drawCommand + ')'
+                fh.write(drawCommand)
+                fh.write('\n')
+                fh.write(f"cmd.load_cgo(tmp{ellipse_idx}, 'ellipsoid-cgo{ellipse_idx}')\n")
+                fh.write(f"cmd.set('cgo_transparency', 0.5, 'ellipsoid-cgo{ellipse_idx}')\n")
+                fh.write(f"obj{ellipse_idx} = [\n BEGIN, LINES, \n COLOR, 0, 1.0, 0, \n")
+                # write axes
+                for i in range(0,3):
+                    fh.write(f'VERTEX, {center[0]}, {center[1]}, {center[2]},\n')
+                    axis = ellipse.axes[i] + center
+                    fh.write(f'VERTEX, {axis[0]}, {axis[1]}, {axis[2]},\n')
+                fh.write("END\n] \n")
+                fh.write(f"cmd.load_cgo(obj{ellipse_idx},'axis{ellipse_idx}')\n")
+        full_py_path = py_script
+        print(f'Pymol script {full_py_path}')
+        #create gaussian output class  
+
+
+        
 
 
 
-                    
-    
-    
+                        
+        
+        
