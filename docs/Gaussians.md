@@ -81,11 +81,12 @@ v =& O, P = 2A, |P| = 8|A| \\
 =& \sqrt{\frac{\pi^3}{n^38|A|}} . [\frac{4n^\frac{3}{2}}{3\sqrt{\pi}}]^2 \\
 =& \frac{4}{9}abc\sqrt{2{\pi}n^3} \\
 =& \frac{4}{3}{\pi}abcn^\frac{3}{2}\sqrt{\frac{2}{9\pi}} \\
-=& volume \times 0.2660
+=& volume \times 0.2660 \times n^\frac{3}{2}
 \end{align*}
 $$
  
-Or the integral of a Gaussian ellipsoid with itself is 3.760 times smaller than the volume.
+Or the integral of a Gaussian ellipsoid with itself is 3.760 times smaller than the volume when n is 1. 
+If n is 2.418 then the Gaussian volume with itself is the same as the ellipsoid volume
 
 ### Ellipsoid rigid body optimization
 
