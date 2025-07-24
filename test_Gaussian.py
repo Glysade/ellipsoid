@@ -406,6 +406,185 @@ class TestGaussian(unittest.TestCase):
         Gaussian.plot_gaussian_intersection(gaussianA, gaussianB, number_of_points)
      
 
+    def test_ellipse_intersection_volume_gaussian_comparison(self ):
+        a1 = [ -0.0891971,   -0.54384129,  1.69825358]
+        b1 = [  0.00874386,  1.70106077,  0.54519951]
+        c1 = [-2.45457096,  0.04891636,  -0.11325628]
+        center1 = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+        a2 = [ 0.49111521,   1.46922175,  -1.73698885]
+        b2 = [  0.15652988,  -2.59142209,  -2.14768188]
+        c2 = [-3.62847313,  0.37099802,  -0.71210589]
+        center2 = np.array([0.49111521,  1.46922175,  -1.73698885])
+        gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+        gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+        number_of_points = 100
+        volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+        #7.7169
+        volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+        #4.7328
+
+    def test_ellipse_intersection_volume_gaussian_comparison2(self ):
+        a1 = [ 4,   0,  0]
+        b1 = [ 0,  5,  0]
+        c1 = [0,  0,  6]
+        center1 = np.array([0,  0,  0])
+        a2 = [-0.30003443, 1.32946329, 1.46748463]
+        b2 = [-2.79975352, 1.84930587, -2.24779645]
+        c2 = [-3.81354613, -3.19881181, 2.11825574]
+        center2 = np.array([-6.32351802,  0.27492053,  -0.93936663])
+        gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+        gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+        number_of_points = 100
+        volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+        #20.77
+        volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+        #19.196
+        
+    def test_ellipse_intersection_volume_gaussian_comparison3(self ):
+        a1 = [  0.03066212,   3.17282733,  -3.55495418]
+        b1 = [  0.45286576,  -5.42733834,  -4.84004033]
+        c1 = [-14.65331877,  -0.61805622,  -0.67800802]
+        center1 = np.array([-0.23426652,  0.59141845,  0.64056746])
+        a2 = [-0.30003443, 1.32946329, 1.46748463]
+        b2 = [-2.79975352, 1.84930587, -2.24779645]
+        c2 = [-3.81354613, -3.19881181, 2.11825574]
+        center2 = np.array([-6.32351802,  0.27492053,  -0.93936663])
+        gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+        gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+        number_of_points = 100
+        volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+        #73.4
+        volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+        #86
+
+    def test_ellipse_intersection_volume_gaussian_comparison4(self ):
+            a1 = [  0.03066212,   3.17282733,  -3.55495418]
+            b1 = [  0.45286576,  -5.42733834,  -4.84004033]
+            c1 = [-14.65331877,  -0.61805622,  -0.67800802]
+            center1 = np.array([-0.23426652,  0.59141845,  0.64056746])
+            a2 = [ -0.01222658,   0.0466439,  1.93013602]
+            b2 = [  -1.5133306,  2.51680727,  -0.07040777]
+            c2 = [-2.69283929,  -1.61855984,  0.02205633]
+            center2 = np.array([1.49194902e-04, 4.70517138e-05,  -1.71050511e-04])
+            gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+            gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+            number_of_points = 100
+            volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+            #45.45
+            volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            #71.25
+
+    def test_ellipse_intersection_volume_gaussian_comparison5(self ):
+            a1 = [-0.30003443, 1.32946329, 1.46748463]
+            b1 = [-2.79975352, 1.84930587, -2.24779645]
+            c1 = [-3.81354613, -3.19881181, 2.11825574]
+            center1 = np.array([-6.32351802,  0.27492053,  -0.93936663])
+            a2 = [ -0.01222658,   0.0466439,  1.93013602]
+            b2 = [  -1.5133306,  2.51680727,  -0.07040777]
+            c2 = [-2.69283929,  -1.61855984,  0.02205633]
+            center2 = np.array([1.49194902e-04, 4.70517138e-05,  -1.71050511e-04])
+            gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+            gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+            number_of_points = 100
+            volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+            #6.34
+            volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            #3.04
+
+    def test_ellipse_intersection_volume_gaussian_comparison_same(self ):
+            a1 = [-0.30003443, 1.32946329, 1.46748463]
+            b1 = [-2.79975352, 1.84930587, -2.24779645]
+            c1 = [-3.81354613, -3.19881181, 2.11825574]
+            center1 = np.array([-6.32351802,  0.27492053,  -0.93936663])
+            a2 = [-0.30003443, 1.32946329, 1.46748463]
+            b2 = [-2.79975352, 1.84930587, -2.24779645]
+            c2 = [-3.81354613, -3.19881181, 2.11825574]
+            center2 = np.array([-6.32351802,  0.27492053,  -0.93936663])
+            gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+            gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+            number_of_points = 100
+            volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+            #48
+            volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            #91
+            #factor of 0.5
+    
+    def test_ellipse_intersection_volume_gaussian_comparison_same2(self ):
+            a1 = [ -0.01222658,   0.0466439,  1.93013602]
+            b1 = [  -1.5133306,  2.51680727,  -0.07040777]
+            c1 = [-2.69283929,  -1.61855984,  0.02205633]
+            center1 = np.array([1.49194902e-04, 4.70517138e-05,  -1.71050511e-04])
+            a2 = [ -0.01222658,   0.0466439,  1.93013602]
+            b2 = [  -1.5133306,  2.51680727,  -0.07040777]
+            c2 = [-2.69283929,  -1.61855984,  0.02205633]
+            center2 = np.array([1.49194902e-04, 4.70517138e-05,  -1.71050511e-04])
+            gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+            gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+            number_of_points = 100
+            volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+            #19.85
+            volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            #71.25
+            #facotr of 0.27
+            #calculte volume of ellipse from axes
+            #install octave 
+
+
+    def test_ellipse_intersection_volume_gaussian_comparison_same3(self ):
+            a1 = [  0.03066212,   3.17282733,  -3.55495418]
+            b1 = [  0.45286576,  -5.42733834,  -4.84004033]
+            c1 = [-14.65331877,  -0.61805622,  -0.67800802]
+            center1 = np.array([-0.23426652,  0.59141845,  0.64056746])
+            a2 = [  0.03066212,   3.17282733,  -3.55495418]
+            b2 = [  0.45286576,  -5.42733834,  -4.84004033]
+            c2 = [-14.65331877,  -0.61805622,  -0.67800802]
+            center2 = np.array([-0.23426652,  0.59141845,  0.64056746])
+            gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+            gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+            number_of_points = 100
+            volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+            #567
+            volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            #1200
+            #factor of 0.47
+
+    def test_ellipse_intersection_volume_gaussian_comparison_same4(self ):
+            a1 = [ 4,   0,  0]
+            b1 = [ 0,  5,  0]
+            c1 = [0,  0,  6]
+            center1 = np.array([0,  0,  0]) 
+            a2 = [ 4,   0,  0]
+            b2 = [ 0,  5,  0]
+            c2 = [0,  0,  6]
+            center2 = np.array([0,  0,  0])
+            gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+            gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+            number_of_points = 100
+            volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+            #133
+            volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            #527
+            #factor of 0.25
+
+    def test_ellipse_intersection_volume_gaussian_comparison_same5(self ):
+            a1 = [ -0.0891971,   -0.54384129,  1.69825358]
+            b1 = [  0.00874386,  1.70106077,  0.54519951]
+            c1 = [-2.45457096,  0.04891636,  -0.11325628]
+            center1 = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+            a2 = [ -0.0891971,   -0.54384129,  1.69825358]
+            b2 = [  0.00874386,  1.70106077,  0.54519951]
+            c2 = [-2.45457096,  0.04891636,  -0.11325628]
+            center2 = np.array([-2.29916708e-04, -1.92200344e-04,  -1.58862120e-05])
+            gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+            gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+            number_of_points = 100
+            volume_gaussian = Gaussian.gaussian_intersection(gaussianA, gaussianB, number_of_points)
+            #8.7
+            volume_ellipse = Gaussian.ellipse_intersection_volume(gaussianA, gaussianB, number_of_points)
+            #26.8
+            #factor of 0.32
+        
+        
 
 
 
