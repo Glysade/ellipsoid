@@ -91,6 +91,7 @@ class Gaussian:
     b: NDArray
     c: NDArray
     matrixA: NDArray
+    n: float
 
 
     def __init__(self, covariance_inverse_matrix: np.ndarray, center: np.ndarray) -> None:
@@ -102,6 +103,7 @@ class Gaussian:
         self.b = ellipse.axes[1]
         self.c = ellipse.axes[2]
         self.matrixA = covariance_inverse_matrix
+        self.n = 2.418
 
     
 
@@ -306,16 +308,16 @@ class Gaussian:
         min_xB = gaussianB.center[0] - (inverse_B[0][0] **0.5) 
         min_yB = gaussianB.center[1] - (inverse_B[1][1] **0.5) 
         min_zB = gaussianB.center[2] - (inverse_B[2][2] **0.5) 
-        min_x = min(max_xA, max_xB)
-        min_y = min(max_yA, max_yB)
-        min_z = min(max_zA, max_zB)
-        max_x = max(min_xA, min_xB)
-        max_y = max(min_yA, min_yB)
-        max_z = max(min_zA, min_zB)
+        max_x = min(max_xA, max_xB)
+        max_y = min(max_yA, max_yB)
+        max_z = min(max_zA, max_zB)
+        min_x = max(min_xA, min_xB)
+        min_y = max(min_yA, min_yB)
+        min_z = max(min_zA, min_zB)
         number_of_points = int(number_of_points)
-        x = np.linspace(max_x, min_x, number_of_points)
-        y = np.linspace(max_x, min_y, number_of_points)
-        z = np.linspace(max_z, min_z, number_of_points)
+        x = np.linspace(min_x, max_x, number_of_points)
+        y = np.linspace(min_x, max_y, number_of_points)
+        z = np.linspace(min_z, max_z, number_of_points)
         points_in_A = 0
         points_in_B = 0
         points_in_intersection = 0
@@ -351,7 +353,7 @@ class Gaussian:
         inverse_A = inverse_of_matrix(matrixA)
         matrixB = gaussianB.matrixA
         inverse_B = inverse_of_matrix(matrixB)
-        C = 0.75225 #w pi
+        C = 0.75225 * gaussianA.n ** (3/2) #w pi
         u = np.subtract(gaussianA.center, gaussianB.center)
         centerB = 0
         P = matrixA + matrixB
@@ -374,7 +376,7 @@ class Gaussian:
         inverse_A = inverse_of_matrix(matrixA)
         matrixB = gaussianB.matrixA
         inverse_B = inverse_of_matrix(matrixB)
-        C = 0.75225 #w pi
+        C = 0.75225 * gaussianA.n ** (3/2)#w pi
         u = np.subtract(gaussianA.center, gaussianB.center)
         centerB = 0
         P = matrixA + matrixB
