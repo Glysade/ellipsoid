@@ -316,7 +316,7 @@ class Gaussian:
         min_z = max(min_zA, min_zB)
         number_of_points = int(number_of_points)
         x = np.linspace(min_x, max_x, number_of_points)
-        y = np.linspace(min_x, max_y, number_of_points)
+        y = np.linspace(min_y, max_y, number_of_points)
         z = np.linspace(min_z, max_z, number_of_points)
         points_in_A = 0
         points_in_B = 0
@@ -324,25 +324,15 @@ class Gaussian:
         for i in x:
                 for j in y:
                         for k in z:
-                                point = np.array([[i], [j], [k]])
-                                transpose_r = np.transpose(point)
-                                XTGA = np.matmul(transpose_r, matrixA)
-                                XTGB = np.matmul(transpose_r, matrixB)
-                                valueA = np.matmul(XTGA, point) 
-                                valueB = np.matmul(XTGB, point) 
-                                if gaussianA.inside_ellipse(i, j, k) == True:
-                                     points_in_A += 1
-                                if gaussianA.inside_ellipse(i, j, k) == False:
+                                insideA = gaussianA.inside_ellipse(i, j, k)
+                                if not insideA:
                                     continue
-                                if gaussianB.inside_ellipse(i, j, k) == True:
-                                     points_in_B += 1
-                                if gaussianA.inside_ellipse(i, j, k) == False:
-                                     continue
-                                if gaussianA.inside_ellipse(i, j, k) == True and gaussianB.inside_ellipse(i, j, k) == True:
+                                if gaussianB.inside_ellipse(i, j, k):
                                     points_in_intersection += 1
-        dx = (min_x - max_x) / number_of_points
-        dy = (min_y - max_y) / number_of_points
-        dz = (min_z - max_z) / number_of_points
+        dx = (max_x - min_x) / number_of_points
+        #swap them
+        dy = (max_y - min_y) / number_of_points
+        dz = (max_z - min_z) / number_of_points
         point_volume = dx * dy * dz
         ellipse_volume = points_in_intersection * point_volume
         return ellipse_volume
@@ -353,7 +343,7 @@ class Gaussian:
         inverse_A = inverse_of_matrix(matrixA)
         matrixB = gaussianB.matrixA
         inverse_B = inverse_of_matrix(matrixB)
-        C = 0.75225 * gaussianA.n ** (3/2) #w pi
+        C = 0.75225 * gaussianA.n**(3/2)
         u = np.subtract(gaussianA.center, gaussianB.center)
         centerB = 0
         P = matrixA + matrixB
@@ -367,7 +357,7 @@ class Gaussian:
         uTA = np.matmul(uT, matrixA)
         uTAu = np.matmul(uTA, u)
         #not absolute value, magnitude
-        volume = (( np.pi ** 3 / deteriminant_of_matrix(P))) ** 0.5 * (C ** 2) * np.exp(vTpv - uTAu)
+        volume = (( np.pi ** 3 / ((gaussianA.n**3) * deteriminant_of_matrix(P)))) ** 0.5 * (C ** 2) * np.exp(gaussianA.n * (vTpv - uTAu))
         return volume
 
     @classmethod
