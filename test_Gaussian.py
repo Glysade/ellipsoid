@@ -597,7 +597,24 @@ class TestGaussian(unittest.TestCase):
             #31
             #factor of 0.32
             #math volume is  32.8
-    
+
+    def test_print_pymol_ellipse_different_shapes(self):
+        a1 = [  0.03066212,   3.17282733,  -3.55495418]
+        b1 = [  0.45286576,  -5.42733834,  -4.84004033]
+        c1 = [-14.65331877,  -0.61805622,  -0.67800802]
+        center1 = np.array([-0.23426652,  0.59141845,  0.64056746])
+        a2 = [ -0.01222658,   0.0466439,  1.93013602]
+        b2 = [  -1.5133306,  2.51680727,  -0.07040777]
+        c2 = [-2.69283929,  -1.61855984,  0.02205633]
+        center2 = np.array([1.49194902e-04, 4.70517138e-05,  -1.71050511e-04])
+        gaussianA = Gaussian.from_axes(a1, b1, c1, center1)
+        gaussianB = Gaussian.from_axes(a2, b2, c2, center2)
+        number_of_points = 100
+        Gaussian.plot_gaussian_intersection(gaussianA, gaussianB, number_of_points)
+
+     
+
+
         
 
 

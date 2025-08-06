@@ -3,6 +3,10 @@ from typing import List
 import numpy as np
 from numpy.typing import NDArray
 from dataclasses import dataclass
+from numpy.random import rand, normal
+import scipy
+import random
+from scipy.spatial.transform import Rotation as R
 
 from Molecule import quadratic_to_parametric
 import numpy.linalg as la
@@ -132,6 +136,8 @@ class Gaussian:
         matrixA = matrix_multiplication(UD, transposeU)
 
         return cls(matrixA, center)
+    
+
     
     def volume_constant(self):
         det = deteriminant_of_matrix(self.convariance_matrix_inverse)
@@ -423,6 +429,37 @@ class Gaussian:
         full_py_path = py_script
         print(f'Pymol script {full_py_path}')
         #create gaussian output class  
+
+    @classmethod
+    def random_ellipsoid_generator(cls, random_center=True):
+
+        x = np.array([random.uniform(0.1, 5.0), 0, 0])
+        y = np.array([0, random.uniform(0.1, 5.0), 0])
+        z = np.array([0, 0, random.uniform(0.1, 5.0)])
+
+        q = normal(size=(4))
+        q /= np.linalg.norm(q) # Unit-random unit quaternion?
+        
+        r = R.from_quat(q)
+        x = r.apply(x)
+        y = r.apply(y)
+        z = r.apply(z)
+
+        center = np.array([0, 0, 0])
+        if random_center:
+            center = np.array([random.uniform(-5.0, 5.0), random.uniform(-5.0, 5.0), random.uniform(-5.0, 5.0)])
+
+        gaussian = Gaussian.from_axes(x, y, z, center)
+        return gaussian
+    
+    @classmethod
+    def random_ellipsoid_generator_two(cls, random_center=True):
+
+        gaussianA = Gaussian.random_ellipsoid_generator(False)
+        gaussianB = Gaussian.random_ellipsoid_generator(True)
+        return (gaussianA, gaussianB)
+    
+         
 
 
         
