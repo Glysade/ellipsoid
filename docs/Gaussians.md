@@ -24,7 +24,7 @@ $$ \mathbf{|A| = |UDV^T| = |U||D||U^T| = |D|} = \frac{1}{a^2b^2c^2}$$
 $$
 \begin{align*}
 f(x) &= e^{-n(x-u)^T\mathbf{A}(x-u)} \\
-\int_x f(x) dx &= \sqrt{\frac{\pi^3}{n^3\mathbf{|A|}}} = abc\sqrt{\frac{\pi^3}{n^3}} 
+C \int_x f(x) dx &= \sqrt{\frac{\pi^3}{n^3\mathbf{|A|}}} = abc\sqrt{\frac{\pi^3}{n^3}} 
 \end{align*}
 $$
 *Volume constant*

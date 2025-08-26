@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
-file_path = 'gaussian_results.txt'
+file_path = 'gaussian_results1000copy.txt'
+from scipy.stats import pearsonr
 import numpy as np
 #move function def up here
 def read_gaussian_points(file_path):
@@ -35,5 +36,5 @@ plt.show()
 covariance = np.cov(x, y)
 x_standard_deviation = np.std(x)
 y_standard_deviation = np.std(y)
-cc = covariance/(x_standard_deviation * y_standard_deviation)
+cc, p = (pearsonr(x, y))
 print(f"Correlation Coefficient: {cc}")

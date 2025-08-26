@@ -438,7 +438,7 @@ class Gaussian:
         z = np.array([0, 0, random.uniform(0.1, 5.0)])
 
         q = normal(size=(4))
-        q /= np.linalg.norm(q) # Unit-random unit quaternion?
+        q /= np.linalg.norm(q) # Unit-random unit quaternion?   
         
         r = R.from_quat(q)
         x = r.apply(x)
