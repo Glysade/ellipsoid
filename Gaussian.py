@@ -192,6 +192,8 @@ class Gaussian:
         transpose_r = np.transpose(point)
         XTG = np.matmul(transpose_r, self.matrixA)
         value = np.matmul(XTG, point) 
+        if (np.isnan(value[0]) or np.isinf(value[0])):
+            return False
         if value[0] <= 1.0:
             return True
         else:
